@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">OpenCVTesting</string>
+    <string name="title_scanner">Scanner</string>
+    <string name="title_image_editor">Image Editor</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_document_preview">Preview</string>
+</resources>
