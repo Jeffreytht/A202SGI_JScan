@@ -21,6 +21,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.opencv.core.CvType.CV_8UC1;
@@ -31,6 +32,11 @@ public class ImageProcessing {
     public static final int COLORFILTER_ORIGINAL    = 1;
     public static final int COLORFILTER_GRAYSCALE   = 1 << 1;
     public static final int COLORFILTER_COLOR       = 1 << 2;
+    public static final HashMap<Integer, String> FILTER_TYPE = new HashMap<Integer, String>(){{
+        put(COLORFILTER_ORIGINAL, "Original Color");
+        put(COLORFILTER_GRAYSCALE, "Grayscale");
+        put(COLORFILTER_COLOR, "Whiteboard");
+    }};
 
     public static void rotateImage(Mat src, Context context)
     {

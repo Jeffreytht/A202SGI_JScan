@@ -21,8 +21,8 @@ import java.util.List;
 
 public class ImageContourSelectorViewModel extends ViewModel {
 
-    private MutableLiveData<Bitmap> mBitmap;
-    private MutableLiveData<Point[]> mContour;
+    private final MutableLiveData<Bitmap> mBitmap;
+    private final MutableLiveData<Point[]> mContour;
 
     // Tag
     public static final String TAG_ORIGINAL_BITMAP = "#ImageContourSelector.OriBitmap";

@@ -3,6 +3,7 @@ package com.example.opencvtesting.ui.documentScanner.document_reader;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,18 +16,18 @@ import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 
-import com.example.opencvtesting.Adapter.DocumentPreviewAdapter;
-import com.example.opencvtesting.Adapter.DocumentReaderColorFilterAdapter;
 import com.example.opencvtesting.Callback.DocumentColorFilterCallback;
 import com.example.opencvtesting.Model.ScannedDocument;
 import com.example.opencvtesting.Model.ScannedImage;
 import com.example.opencvtesting.R;
 
-public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener {
+public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener, ScannedImageFinishPreComputeCallback {
 
     private DocumentPreviewAdapter mDocumentPreviewAdapter;
     private ViewPager2 mViewPagerDocumentPreview;
@@ -35,6 +36,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     private DocumentReaderColorFilterAdapter mDocumentReaderColorFilterAdapter;
     private DocumentReaderViewModel mViewModel;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -59,15 +61,13 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mRecyclerViewColorFilter.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL,false));
         mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
 
-        mDocumentPreviewAdapter = new DocumentPreviewAdapter();
+        mDocumentPreviewAdapter = new DocumentPreviewAdapter(mViewPagerDocumentPreview);
         mViewPagerDocumentPreview.setAdapter(mDocumentPreviewAdapter);
-
 
         mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), new Observer<ScannedDocument>() {
             @Override
             public void onChanged(ScannedDocument scannedDocument) {
                 mDocumentPreviewAdapter.setData(getContext(), scannedDocument.getScannedImageList());
-                mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage());
             }
         });
 
@@ -82,7 +82,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 mViewModel.setViewPagerCurrentIndex(position);
-                mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage());
+                mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
             }
 
             @Override
@@ -92,7 +92,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         });
 
         if(getArguments()!= null) {
-            mViewModel.initViewModel(getArguments());
+            mViewModel.initViewModel(getArguments(), this);
         }
 
         return view;
@@ -112,6 +112,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             DocumentReaderFragmentDirections.ActionDocumentReaderFragmentToNavigationImageContourSelector action
                     = DocumentReaderFragmentDirections.actionDocumentReaderFragmentToNavigationImageContourSelector(selectedImage.getOriImage(), selectedImage.getContour());
             NavHostFragment.findNavController(this).navigate(action);
+
         }
         else if(id == mButtonRotateLeft.getId())
         {
@@ -143,5 +144,17 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     public void onFocusChange(View v, boolean hasFocus) {
         if(!hasFocus)
             mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void refreshUi() {
+        mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mViewModel.stopAsync();
     }
 }

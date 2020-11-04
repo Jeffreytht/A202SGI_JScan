@@ -110,8 +110,11 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
         }
         else if(v.getId() == mBtnDocument.getId())
         {
+            final ScannedDocument scannedDocument = scannerViewModel.getScannedDocument();
+            if(scannedDocument.isEmpty()) return;
+
             ScannerFragmentDirections.ActionNavigationScannerToDocumentReaderFragment action
-                    = ScannerFragmentDirections.actionNavigationScannerToDocumentReaderFragment(scannerViewModel.getScannedDocument());
+                    = ScannerFragmentDirections.actionNavigationScannerToDocumentReaderFragment(scannedDocument);
             NavHostFragment.findNavController(this).navigate(action);
         }
     }

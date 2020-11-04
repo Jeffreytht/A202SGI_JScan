@@ -38,10 +38,16 @@ public class ScannedDocument implements Parcelable {
         this.mScannedImageList = mScannedImageList;
     }
 
-    public void addScannedImage(Bitmap oriImage, Bitmap finalImage, Point[] contour)
+    public void addScannedImage(Bitmap oriImage, Point[] contour)
     {
-        mScannedImageList.add(new ScannedImage(oriImage,finalImage,contour));
+        mScannedImageList.add(new ScannedImage(oriImage,contour));
     }
+
+    public int size(){
+        return mScannedImageList.size();
+    }
+
+    public boolean isEmpty(){return mScannedImageList.size() == 0;}
 
     @Override
     public int describeContents() {

@@ -65,7 +65,6 @@ public class ScannerViewModel extends ViewModel {
         {
             final SavedStateHandle savedStateHandle = backStack.getSavedStateHandle();
             final Bitmap oriBitmapLiveData     = savedStateHandle.get(ImageContourSelectorViewModel.TAG_ORIGINAL_BITMAP);
-            final Bitmap editedBitmapLiveData  = savedStateHandle.get(ImageContourSelectorViewModel.TAG_EDITED_BITMAP);
             final Point[] contourLiveData      = savedStateHandle.get(ImageContourSelectorViewModel.TAG_CONTOUR);
             final MutableLiveData<Integer> flagLiveData  = savedStateHandle.getLiveData(ImageContourSelectorViewModel.TAG_FLAG_ADD_TO_DOCUMENT);
 
@@ -73,7 +72,7 @@ public class ScannerViewModel extends ViewModel {
                 @Override
                 public void onChanged(Integer integer) {
                     if(integer== ImageContourSelectorViewModel.ADD_IMAGE) {
-                        mScannedDocument.addScannedImage(oriBitmapLiveData, editedBitmapLiveData, contourLiveData);
+                        mScannedDocument.addScannedImage(oriBitmapLiveData, contourLiveData);
                         clearBuffer(navController);
                     }
                     else if(integer == ImageContourSelectorViewModel.DISCARD_IMAGE)
