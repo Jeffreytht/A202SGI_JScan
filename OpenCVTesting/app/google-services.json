@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "63492323291",
+    "firebase_url": "https://jscanner-1f2a2.firebaseio.com",
+    "project_id": "jscanner-1f2a2",
+    "storage_bucket": "jscanner-1f2a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63492323291:android:d79fd92fa62d95c0d659fe",
+        "android_client_info": {
+          "package_name": "com.example.jScanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "63492323291-8dt9m7jhd6hr0dradoi7b2hnbhfuqgst.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg1FkTcILk1VHmlV_-Imvj_NX4kTzwQwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "63492323291-8dt9m7jhd6hr0dradoi7b2hnbhfuqgst.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

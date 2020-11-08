@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_scanner"
-        android:name="com.example.opencvtesting.ui.documentScanner.scanner.ScannerFragment"
+        android:name="com.example.jScanner.ui.documentScanner.scanner.ScannerFragment"
         android:label="@string/title_scanner"
         tools:layout="@layout/fragment_scanner" >
         <action
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/fragment_navigation_image_contour_selector"
-        android:name="com.example.opencvtesting.ui.documentScanner.image_contour_selector.ImageContourSelectorFragment"
+        android:name="com.example.jScanner.ui.documentScanner.image_contour_selector.ImageContourSelectorFragment"
         android:label="@string/title_image_editor"
         tools:layout="@layout/fragment_image_contour_selector" >
         <argument
@@ -34,12 +34,12 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_documentReader"
-        android:name="com.example.opencvtesting.ui.documentScanner.document_reader.DocumentReaderFragment"
+        android:name="com.example.jScanner.ui.documentScanner.document_reader.DocumentReaderFragment"
         android:label="@string/title_document_preview"
-        tools:layout="@layout/document_reader_fragment" >
+        tools:layout="@layout/fragment_document_reader" >
         <argument
             android:name="ScannedDocument"
-            app:argType="com.example.opencvtesting.Model.ScannedDocument" />
+            app:argType="com.example.jScanner.Model.ScannedDocument" />
         <action
             android:id="@+id/action_documentReaderFragment_to_navigation_image_contour_selector"
             app:destination="@id/fragment_navigation_image_contour_selector"
@@ -47,17 +47,21 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_splashScreen"
-        android:name="com.example.opencvtesting.ui.splashScreen.SplashScreen"
+        android:name="com.example.jScanner.ui.splashScreen.SplashScreen"
         android:label="splash_screen_fragment"
-        tools:layout="@layout/splash_screen_fragment" >
+        tools:layout="@layout/fragment_splash_screen" >
         <action
-            android:id="@+id/action_splashScreen_to_navigation_scanner"
-
-            app:destination="@id/fragment_scanner"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out" />
+            android:id="@+id/action_fragment_splashScreen_to_signIn"
+            app:destination="@id/signIn" />
+    </fragment>
+    <fragment
+        android:id="@+id/signIn"
+        android:name="com.example.jScanner.ui.signin.SignIn"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signIn_to_fragment_scanner"
+            app:destination="@id/fragment_scanner" />
     </fragment>
 
 </navigation>
