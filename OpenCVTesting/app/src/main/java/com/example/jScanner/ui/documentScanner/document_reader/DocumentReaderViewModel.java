@@ -1,6 +1,8 @@
 package com.example.jScanner.ui.documentScanner.document_reader;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -20,7 +22,11 @@ import com.example.jScanner.utility.ImageProcessing;
 
 import org.opencv.core.Point;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 // Callback from async to insert data
@@ -104,6 +110,50 @@ public class DocumentReaderViewModel extends ViewModel implements ScannedImagePr
     public void stopAsync() {
         if (mImagePreComputationAsync.getStatus() == AsyncTask.Status.RUNNING)
             mImagePreComputationAsync.cancel(true);
+    }
+
+    public void createPDF(String path){
+
+        final File file = new File(path, "AnswerSheet.pdf");
+
+        PdfDocument pdfDocument = new PdfDocument();
+        int height = 1010;
+        int width = 714;
+
+        int reqH, reqW;
+        reqW = width;
+
+        LinkedList<ScannedImage> scannedImageLinkedList = mScannedDocument.getValue().getScannedImageList();
+
+        for (int i = 0; i < scannedImageLinkedList.size(); i++) {
+            Bitmap bitmap = scannedImageLinkedList.get(i).getFinalImage();
+
+            reqW = Math.max(reqW, bitmap.getWidth());
+            reqH = Math.max(width * bitmap.getHeight() / bitmap.getWidth(), height);
+
+            if (reqH >= height) {
+                reqH = height;
+                reqW = height * bitmap.getWidth() / bitmap.getHeight();
+            }
+
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(reqW, reqH, 1).create();
+            PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
+
+            canvas.drawBitmap(bitmap, 0, 0, null);
+
+            pdfDocument.finishPage(page);
+        }
+
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(file);
+            pdfDocument.writeTo(fos);
+            pdfDocument.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void setViewPagerCurrentIndex(int viewPagerCurrentIndex) {

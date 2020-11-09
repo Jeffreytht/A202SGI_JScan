@@ -5,8 +5,17 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_document_preview">Preview</string>
 
-    <!-- sign in -->
+    <!-- label -->
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>
     <string name="label_signIn">Sign In</string>
+    <string name="label_dont_have_account">Don\'t have an account?</string>
+    <string name="label_signUp_now">Sign up now</string>
+    <string name="label_or">or</string>
+    <string name="label_save">Save</string>
+
+
+    <!-- error message -->
+    <string name="error_email_empty">Email cannot be empty</string>
+    <string name="error_password_empty">Password cannot be empty</string>
 </resources>

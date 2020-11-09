@@ -43,13 +43,10 @@ public class SplashScreen extends Fragment {
 
         if(getActivity() == null)return;
         AppCompatActivity parActivity = (AppCompatActivity) getActivity();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (String permission: PERMISSIONS) {
-                if(parActivity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED){
-                    requestPermissions(new String[]{permission},1);
-                }
+        for (String permission: PERMISSIONS) {
+            if(parActivity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{permission},1);
             }
-
         }
 
         new Handler().postDelayed(new Runnable() {

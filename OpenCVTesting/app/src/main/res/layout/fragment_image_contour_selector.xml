@@ -24,14 +24,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@android:color/black"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_rotateLeft"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -39,22 +40,24 @@
             android:drawableTop="@drawable/ic_rotate_left_white_24dp"
             android:text="Left"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorDark"
             android:textSize="10sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_rotateRight"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             android:drawableTop="@drawable/ic_rotate_right_white_24dp"
             android:text="Right"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorDark"
             android:textSize="10sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_done"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -62,7 +65,7 @@
             android:drawableTop="@drawable/ic_done_white_24dp"
             android:text="Done"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorDark"
             android:textSize="10sp" />
     </LinearLayout>
 

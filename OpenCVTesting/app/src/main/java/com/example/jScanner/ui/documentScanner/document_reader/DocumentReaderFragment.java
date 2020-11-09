@@ -16,6 +16,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,7 +42,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_document_reader, container, false);
-
+        setHasOptionsMenu(true);
         mViewPagerDocumentPreview   = view.findViewById(R.id.viewPager);
         mButtonCrop                 = view.findViewById(R.id.button_crop);
         mButtonRotateLeft           = view.findViewById(R.id.button_rotateLeft);
@@ -99,6 +102,21 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_document_reader,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.save){
+            mViewModel.createPDF(getContext().getFilesDir().getPath());
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

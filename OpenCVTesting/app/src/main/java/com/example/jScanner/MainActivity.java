@@ -1,6 +1,7 @@
 package com.example.jScanner;
 
 import android.os.Bundle;
+import android.view.Menu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,17 +13,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.jScanner.utility.Firebase;
-import com.google.firebase.FirebaseApp;
+import com.example.jScanner.utility.User;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
 
-    private NavHostFragment mFragement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.init(this);
+        User.init(this);
         setContentView(R.layout.activity_main);
        // BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         else if(destId == R.id.fragment_navigation_image_contour_selector)
             showActionBar();
         else if(destId == R.id.fragment_scanner)
-            showActionBar();
+            hideActionBar();
     }
 
     private void hideActionBar(){
