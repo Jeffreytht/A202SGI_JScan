@@ -13,9 +13,15 @@
     <string name="label_signUp_now">Sign up now</string>
     <string name="label_or">or</string>
     <string name="label_save">Save</string>
+    <string name="label_color">Color</string>
+    <string name="label_right">Right</string>
+    <string name="label_left">Left</string>
+    <string name="label_crop">Crop</string>
 
 
     <!-- error message -->
     <string name="error_email_empty">Email cannot be empty</string>
     <string name="error_password_empty">Password cannot be empty</string>
+    <string name="label_reorder">Reorder</string>
+
 </resources>

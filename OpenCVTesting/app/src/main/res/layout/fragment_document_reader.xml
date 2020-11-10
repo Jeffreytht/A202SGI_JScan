@@ -53,7 +53,7 @@
             android:background="@null"
             android:drawableTop="@drawable/ic_baseline_crop_24"
             android:elevation="0dp"
-            android:text="Crop"
+            android:text="@string/label_crop"
             android:textColor="@color/colorDark"
             android:textSize="10sp" />
 
@@ -65,7 +65,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:drawableTop="@drawable/ic_rotate_left_white_24dp"
-            android:text="Left"
+            android:text="@string/label_left"
             android:textColor="@color/colorDark"
             android:textSize="10sp" />
 
@@ -77,7 +77,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:drawableTop="@drawable/ic_rotate_right_white_24dp"
-            android:text="Right"
+            android:text="@string/label_right"
             android:textColor="@color/colorDark"
             android:textSize="10sp" />
 
@@ -89,8 +89,20 @@
             android:layout_weight="1"
             android:background="@null"
             android:drawableTop="@drawable/ic_color_lens_24px"
-            android:text="Color"
+            android:text="@string/label_color"
             android:textColor="@color/colorDark"
+            android:textSize="10sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_reorder"
+            style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_baseline_reorder_24"
+            android:fontFamily="@font/roboto"
+            android:text="@string/label_reorder"
+            android:textColor="@color/colorWhite"
             android:textSize="10sp" />
     </LinearLayout>
 

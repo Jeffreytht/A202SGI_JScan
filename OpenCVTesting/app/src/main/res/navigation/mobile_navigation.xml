@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_scanner" >
         <action
             android:id="@+id/action_scanner_to_navigation_image_selector"
-            app:destination="@id/fragment_navigation_image_contour_selector" />
+            app:destination="@id/fragment_navigation_image_contour_selector"
+            app:popUpTo="@id/fragment_scanner" />
         <action
             android:id="@+id/action_navigation_scanner_to_documentReaderFragment"
             app:destination="@id/fragment_documentReader"
@@ -44,6 +45,9 @@
             android:id="@+id/action_documentReaderFragment_to_navigation_image_contour_selector"
             app:destination="@id/fragment_navigation_image_contour_selector"
             app:popUpTo="@id/fragment_documentReader" />
+        <action
+            android:id="@+id/action_fragment_documentReader_to_documentArrangeFragment"
+            app:destination="@id/documentArrangeFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragment_splashScreen"
@@ -62,6 +66,15 @@
         <action
             android:id="@+id/action_signIn_to_fragment_scanner"
             app:destination="@id/fragment_scanner" />
+    </fragment>
+    <fragment
+        android:id="@+id/documentArrangeFragment"
+        android:name="com.example.jScanner.ui.documentScanner.document_arrange.DocumentArrangeFragment"
+        android:label="fragment_document_arrange"
+        tools:layout="@layout/fragment_document_arrange" >
+        <argument
+            android:name="scannedImageList"
+            app:argType="com.example.jScanner.Model.ScannedImage[]" />
     </fragment>
 
 </navigation>

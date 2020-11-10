@@ -28,11 +28,13 @@ import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 
+import java.util.LinkedList;
+
 public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener, ScannedImageFinishPreComputeCallback {
 
     private DocumentPreviewAdapter mDocumentPreviewAdapter;
     private ViewPager2 mViewPagerDocumentPreview;
-    private Button mButtonRotateLeft, mButtonRotateRight, mButtonCrop, mButtonColorFilter;
+    private Button mButtonRotateLeft, mButtonRotateRight, mButtonCrop, mButtonColorFilter, mButtonReorder;
     private RecyclerView mRecyclerViewColorFilter;
     private DocumentReaderColorFilterAdapter mDocumentReaderColorFilterAdapter;
     private DocumentReaderViewModel mViewModel;
@@ -48,6 +50,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mButtonRotateLeft           = view.findViewById(R.id.button_rotateLeft);
         mButtonRotateRight          = view.findViewById(R.id.button_rotateRight);
         mButtonColorFilter          = view.findViewById(R.id.button_colorFilter);
+        mButtonReorder              = view.findViewById(R.id.button_reorder);
         mRecyclerViewColorFilter    = view.findViewById(R.id.recyclerView_colorFilter);
         mViewModel                  = ViewModelProviders.of(this).get(DocumentReaderViewModel.class);
         mViewModel.setBackStackEntry(NavHostFragment.findNavController(this),getViewLifecycleOwner());
@@ -56,6 +59,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mButtonRotateRight  .setOnClickListener(this);
         mButtonCrop         .setOnClickListener(this);
         mButtonColorFilter  .setOnClickListener(this);
+        mButtonReorder      .setOnClickListener(this);
 
         mDocumentReaderColorFilterAdapter = new DocumentReaderColorFilterAdapter(this);
         mRecyclerViewColorFilter.setAdapter(mDocumentReaderColorFilterAdapter);
@@ -148,6 +152,11 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
                 mRecyclerViewColorFilter.setVisibility(View.VISIBLE);
             else
                 mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
+        }
+        else if(id == mButtonReorder.getId()){
+            LinkedList<ScannedImage> scannedImageLinkedList = mViewModel.getScannedDocument().getValue().getScannedImageList();
+            DocumentReaderFragmentDirections.ActionFragmentDocumentReaderToDocumentArrangeFragment action = DocumentReaderFragmentDirections.actionFragmentDocumentReaderToDocumentArrangeFragment(scannedImageLinkedList.toArray(new ScannedImage[scannedImageLinkedList.size()]));
+            NavHostFragment.findNavController(this).navigate(action);
         }
     }
 

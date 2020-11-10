@@ -1,5 +1,6 @@
 package com.example.jScanner.ui.documentScanner.document_reader;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jScanner.Callback.DocumentColorFilterCallback;
@@ -75,6 +77,7 @@ public class DocumentReaderColorFilterAdapter extends  RecyclerView.Adapter<Docu
             this.mDocumentColorFilterCallback = documentColorFilterCallback;
         }
 
+
         public void setData(@NonNull Bitmap bitmap, String filterName, final int position)
         {
             DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
@@ -83,16 +86,16 @@ public class DocumentReaderColorFilterAdapter extends  RecyclerView.Adapter<Docu
             final int expectedHeight = (int)(expectedWidth  * aspectRatio);
 
             if((1 << position) != mScannedImage.getFilter())
-                mFilteredImage.setBackground(mContext.getResources().getDrawable(R.drawable.document_reader_image_border));
+                mFilteredImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.document_reader_image_border));
             else
-                mFilteredImage.setBackground(mContext.getResources().getDrawable(R.drawable.document_reader_selected_image_border));
+                mFilteredImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.document_reader_selected_image_border));
 
             mFilteredImage.setImageBitmap(Bitmap.createScaledBitmap(bitmap,expectedWidth,expectedHeight,false));
             mTextViewFilteredName.setText(filterName);
             mFilteredImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mFilteredImage.setBackground(mContext.getResources().getDrawable(R.drawable.document_reader_selected_image_border));
+                    mFilteredImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.document_reader_selected_image_border));
                     mDocumentColorFilterCallback.changeColorFilter(1 << position);
                 }
             });
