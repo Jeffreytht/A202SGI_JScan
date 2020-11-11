@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -34,7 +34,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
     private ImageButton mBtnDocument;
     private TextView mTextViewTotalImage;
 
-    private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(getActivity()) {
+    private final BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(getActivity()) {
         @Override
         public void onManagerConnected(int status) {
             if (status == BaseLoaderCallback.SUCCESS) {
@@ -49,7 +49,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_scanner, container, false);
         NavController navController = NavHostFragment.findNavController(this);
-        scannerViewModel = ViewModelProviders.of(this).get(ScannerViewModel.class);
+        scannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
         scannerViewModel.setBackStackEntry(navController,getViewLifecycleOwner());
         mJavaCameraView = root.findViewById(R.id.my_camera_view);
         mJavaCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -129,7 +129,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public void receiveBitmap(Bitmap bitmap) {
-        scannerViewModel.setReceivedBitmap(scannerViewModel.getRGBA(), getContext());
+        scannerViewModel.setReceivedBitmap(scannerViewModel.getRGBA());
 
         NavController navController = NavHostFragment.findNavController(this);
         ScannerFragmentDirections.ActionScannerToNavigationImageSelector action

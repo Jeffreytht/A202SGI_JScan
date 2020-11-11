@@ -12,7 +12,7 @@ import com.example.jScanner.R;
 public class ForgotPasswordViewModel extends AndroidViewModel {
     private String mEmail;
 
-    private MutableLiveData<String> errEmail = new MutableLiveData<>();
+    private final MutableLiveData<String> errEmail = new MutableLiveData<>();
 
     public ForgotPasswordViewModel(@NonNull Application application) {
         super(application);

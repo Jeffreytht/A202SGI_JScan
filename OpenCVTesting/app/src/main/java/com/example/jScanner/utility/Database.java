@@ -2,11 +2,9 @@ package com.example.jScanner.utility;
 
 import androidx.annotation.NonNull;
 
-import com.example.jScanner.Callback.DatabaseCallback;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Database {
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
@@ -44,8 +43,8 @@ public class Database {
 
         ref.get().continueWith(new Continuation<QuerySnapshot, Object>() {
             @Override
-            public Object then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<DocumentSnapshot> snapshots = task.getResult().getDocuments();
+            public Object then(@NonNull Task<QuerySnapshot> task)  {
+                List<DocumentSnapshot> snapshots = Objects.requireNonNull(task.getResult()).getDocuments();
                 for (DocumentSnapshot s : snapshots)
                     if (!scannedImageIdSet.contains(s.getId()))
                         s.getReference().delete();
@@ -53,7 +52,7 @@ public class Database {
             }
         }).continueWith(new Continuation<Object, Object>() {
             @Override
-            public Object then(@NonNull Task<Object> task) throws Exception {
+            public Object then(@NonNull Task<Object> task)  {
                 Map<String, Object> imageData = new HashMap<>();
 
                 for (ScannedImage si : scannedImageLinkedList) {
@@ -98,20 +97,20 @@ public class Database {
         }
     }
 
-    public static void getDocument(FirebaseUser firebaseUser, final DatabaseCallback databaseCallback) {
-        String uuid = firebaseUser.getUid();
-
-        DocumentReference docRef = instance.mDb.collection("users").document(uuid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot snapshot = task.getResult();
-                    Map<String, Object> data = snapshot.getData();
-                    databaseCallback.onDataReceived(data);
-                }
-            }
-        });
-    }
+//    public static void getDocument(FirebaseUser firebaseUser, final DatabaseCallback databaseCallback) {
+//        String uuid = firebaseUser.getUid();
+//
+//        DocumentReference docRef = instance.mDb.collection("users").document(uuid);
+//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot snapshot = task.getResult();
+//                    Map<String, Object> data = Objects.requireNonNull(snapshot).getData();
+//                    databaseCallback.onDataReceived(data);
+//                }
+//            }
+//        });
+//    }
 
 }

@@ -21,9 +21,7 @@ import com.example.jScanner.R;
 
 public class DocumentArrangeFragment extends Fragment {
 
-    private DocumentArrangeViewModel mViewModel;
     private RecyclerView mRvDocumentArrange;
-    private DocumentArrangeAdapter mAdapter;
 
     public static final String TAG_SCANNED_IMAGE_LIST = "ScannedImageLinkedList";
 
@@ -39,11 +37,11 @@ public class DocumentArrangeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(DocumentArrangeViewModel.class);
+        DocumentArrangeViewModel mViewModel = new ViewModelProvider(this).get(DocumentArrangeViewModel.class);
 
         if(getArguments() != null){
             mViewModel.init(getArguments());
-            mAdapter = new DocumentArrangeAdapter(getContext(), mViewModel.getScannedImageList());
+            DocumentArrangeAdapter mAdapter = new DocumentArrangeAdapter(getContext(), mViewModel.getScannedImageList());
             ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
             ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
             touchHelper.attachToRecyclerView(mRvDocumentArrange);

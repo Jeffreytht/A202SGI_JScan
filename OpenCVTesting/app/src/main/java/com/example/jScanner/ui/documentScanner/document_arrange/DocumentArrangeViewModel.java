@@ -18,8 +18,5 @@ public class DocumentArrangeViewModel extends ViewModel {
         mScannedDocument =  args.getScannedDocument();
     }
 
-    public ScannedDocument getScannedDocument(){
-        return mScannedDocument;
-    }
     public LinkedList<ScannedImage> getScannedImageList() {return mScannedDocument.getScannedImageList();}
 }

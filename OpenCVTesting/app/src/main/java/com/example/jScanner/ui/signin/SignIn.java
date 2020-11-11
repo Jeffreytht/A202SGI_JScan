@@ -25,6 +25,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+
 public class SignIn extends Fragment implements View.OnClickListener{
 
     private SignInViewModel mViewModel;
@@ -107,7 +108,7 @@ public class SignIn extends Fragment implements View.OnClickListener{
         User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResult>() {
             @Override
             public void onChanged(SignInResult signInResult) {
-                ((MainActivity) getActivity()).dismissProgressDialog();
+                ((MainActivity) requireActivity()).dismissProgressDialog();
                 if(signInResult.isSuccess()){
                     Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
                     NavController navController =  NavHostFragment.findNavController(SignIn.this);
@@ -124,7 +125,7 @@ public class SignIn extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         if(v.getId() == mSignInButton.getId()){
             if(mViewModel.validate()) {
-                ((MainActivity) getActivity()).showProgressDialog("Signing in");
+                ((MainActivity) requireActivity()).showProgressDialog("Signing in");
                 User.signInWithEmailAndPassword(mViewModel.getEmail(), mViewModel.getPassword());
             }
         } else if(v.getId() == mGoogleSignInButton.getId()){
@@ -141,7 +142,7 @@ public class SignIn extends Fragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == GOOGLE_SIGN_IN_REQUEST_CODE){
-            ((MainActivity) getActivity()).showProgressDialog("Signing in");
+            ((MainActivity) requireActivity()).showProgressDialog("Signing in");
             User.signInWithGoogle(data);
         }
     }

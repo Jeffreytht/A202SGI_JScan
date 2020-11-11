@@ -81,7 +81,6 @@ public class DocumentPreviewAdapter extends RecyclerView.Adapter<DocumentPreview
         private int imageIntrinsicWidth;
         private static int imageViewHeight;
         private static int imageViewWidth;
-        private Context context;
         private final ViewPager2 mParent;
 
         @SuppressLint("ClickableViewAccessibility")

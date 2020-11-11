@@ -21,10 +21,6 @@ public class ScannedImage implements  Parcelable{
     private Point[] mContour;
     private int mFilter;
 
-    ScannedImage()
-    {
-        mId = idCounter ++;
-    }
 
     ScannedImage(Bitmap oriImage, Point[] contour)
     {
@@ -34,12 +30,6 @@ public class ScannedImage implements  Parcelable{
         mFilter     = ImageProcessing.COLORFILTER_COLOR;
     }
 
-    ScannedImage(int id, Bitmap oriImage, Point[] contour, int filter){
-        mId         = id;
-        mOriImage   = oriImage;
-        mContour    = contour;
-        mFilter     = filter;
-    }
 
     public int getId(){return mId;}
 
@@ -104,7 +94,7 @@ public class ScannedImage implements  Parcelable{
         Iterator<Map.Entry<Integer, String>> it = ImageProcessing.FILTER_TYPE.entrySet().iterator();
 
         for(int i = 0; it.hasNext(); i++){
-            Map.Entry<Integer, String> element = (Map.Entry<Integer, String>)it.next();
+            Map.Entry<Integer, String> element = it.next();
             bmp[i] = ImageProcessing.colorFiltering(ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)), (int)element.getKey());
         }
 

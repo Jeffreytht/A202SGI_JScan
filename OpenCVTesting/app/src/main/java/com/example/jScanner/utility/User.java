@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
 
 
 public class User implements OnCompleteListener<AuthResult>{
@@ -56,7 +57,7 @@ public class User implements OnCompleteListener<AuthResult>{
                 final String message;
 
                 if (!task.isSuccessful()) {
-                    message = task.getException().getMessage();
+                    message = Objects.requireNonNull(task.getException()).getMessage();
                 } else {
                     message = "An email has been sent to your email account. Kindly check your email to reset the password.";
                 }
@@ -89,7 +90,7 @@ public class User implements OnCompleteListener<AuthResult>{
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            AuthCredential credential = GoogleAuthProvider.getCredential(Objects.requireNonNull(account).getIdToken(), null);
             instance.mAuth.signInWithCredential(credential).addOnCompleteListener(instance);
         } catch (final ApiException e) {
             instance.mSignInResult.setValue(new SignInResult() {

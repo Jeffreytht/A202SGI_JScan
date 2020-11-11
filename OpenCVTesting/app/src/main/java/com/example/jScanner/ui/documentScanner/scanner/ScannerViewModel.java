@@ -59,7 +59,7 @@ public class ScannerViewModel extends ViewModel {
 
     Bitmap getReceivedBitmap(){return mReceivedBitmap;}
 
-    void setReceivedBitmap(Mat mat, Context context)
+    void setReceivedBitmap(Mat mat)
     {
         mReceivedBitmap = ImageProcessing.matToBitmap(mat);
     }

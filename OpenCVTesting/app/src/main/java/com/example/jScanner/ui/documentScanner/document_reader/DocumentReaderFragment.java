@@ -15,9 +15,10 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,8 @@ import com.example.jScanner.R;
 import com.example.jScanner.utility.Database;
 import com.example.jScanner.utility.User;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.Objects;
 
 public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener, ScannedImageFinishPreComputeCallback {
 
@@ -56,7 +59,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mButtonReorder = view.findViewById(R.id.button_reorder);
         mButtonRemove = view.findViewById(R.id.button_remove);
         mRecyclerViewColorFilter = view.findViewById(R.id.recyclerView_colorFilter);
-        mViewModel = ViewModelProviders.of(this).get(DocumentReaderViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(DocumentReaderViewModel.class);
         mViewModel.setBackStackEntry(NavHostFragment.findNavController(this), getViewLifecycleOwner());
 
         mButtonRotateLeft.setOnClickListener(this);
@@ -131,7 +134,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
 
             mEditTextFileName.setHint("File name");
 
-            mEditTextFileName.setTextColor(getContext().getColor(R.color.colorPrimary));
+            mEditTextFileName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
             mEditTextFileName.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             if (mViewModel.isDocumentNameSet())
@@ -139,18 +142,18 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
 
             linearLayout.addView(mEditTextFileName);
 
-            new MaterialAlertDialogBuilder(getContext())
+            new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Save as")
                     .setView(linearLayout)
                     .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ((MainActivity) getActivity()).showProgressDialog("Creating PDF");
+                            ((MainActivity) requireActivity()).showProgressDialog("Creating PDF");
 
                             mViewModel.setDocumentName(mEditTextFileName.getText().toString());
-                            Database.insertNewDocument(User.getUser(), mViewModel.getScannedDocument().getValue());
+                            Database.insertNewDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()));
 
-                            ((MainActivity) getActivity()).dismissProgressDialog();
+                            ((MainActivity) requireActivity()).dismissProgressDialog();
                         }
                     }).show();
         }

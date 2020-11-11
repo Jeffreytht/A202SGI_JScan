@@ -1,12 +1,9 @@
 package com.example.jScanner.ui.documentScanner.document_arrange;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -14,11 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
+import com.example.jScanner.ui.documentScanner.document_reader.DocumentArrangeViewHolder;
 
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrangeAdapter.DocumentArrangeViewHolder> implements ItemTouchHelperAdapter{
+public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrangeViewHolder> implements ItemTouchHelperAdapter{
 
     private final Context mContext;
     private final LinkedList<ScannedImage> mScannedDocumentLinkedList;
@@ -79,24 +77,5 @@ public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrange
     }
 
 
-    public class DocumentArrangeViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
-        private final TextView tvPageNumber;
-        private final ImageView mIvDocument;
 
-        public DocumentArrangeViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvPageNumber = itemView.findViewById(R.id.tv_pageNumber);
-            mIvDocument = itemView.findViewById(R.id.iv_document);
-        }
-
-        public void setData(Bitmap bitmap, int pageNumber){
-            mIvDocument.setImageBitmap(bitmap);
-            tvPageNumber.setText(String.valueOf(pageNumber));
-        }
-
-        @Override
-        public void onItemMove(int newPosition) {
-            tvPageNumber.setText(String.valueOf(newPosition + 1));
-        }
-    }
 }

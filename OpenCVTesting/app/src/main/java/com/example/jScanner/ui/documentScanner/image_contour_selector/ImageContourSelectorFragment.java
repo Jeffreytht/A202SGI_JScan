@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -40,7 +40,7 @@ public class ImageContourSelectorFragment extends Fragment implements View.OnCli
         mButtonRotateLeft.setOnClickListener(this);
         mButtonRotateRight.setOnClickListener(this);
 
-        imageContourSelectorViewModel = ViewModelProviders.of(this).get(ImageContourSelectorViewModel.class);
+        imageContourSelectorViewModel = new ViewModelProvider(this).get(ImageContourSelectorViewModel.class);
 
 
         if(getArguments() != null) {

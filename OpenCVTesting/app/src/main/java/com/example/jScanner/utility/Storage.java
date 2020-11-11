@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
@@ -20,12 +19,12 @@ public class Storage {
         byte[] bmpArr = bos.toByteArray();
 
         StorageReference ref = mInstance.mStorage.getReference().child(IMAGE_PREFIX_PATH + path);
-        UploadTask uploadTask = ref.putBytes(bmpArr);
+        ref.putBytes(bmpArr);
     }
 
     public static void uploadPDF(String path, byte[] pdf){
         StorageReference ref = mInstance.mStorage.getReference().child(DOCUMENT_PREFIX_PATH + path);
-        UploadTask uploadTask = ref.putBytes(pdf);
+        ref.putBytes(pdf);
     }
 
 }

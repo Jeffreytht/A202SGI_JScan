@@ -40,7 +40,7 @@ public class ImageProcessing {
     public static void rotateImage(Mat src, Context context)
     {
         int offset = 90, rotation = 0;
-        final int currScreenRotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
+        final int currScreenRotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
         switch (currScreenRotation) {
             case Surface.ROTATION_0:
                 break;
@@ -87,9 +87,9 @@ public class ImageProcessing {
         Arrays.sort(arr);
         double median;
         if (arr.length % 2 == 0)
-            median = ((double)arr[arr.length/2] + (double)arr[arr.length/2 - 1])/2;
+            median = (arr[arr.length/2] + arr[arr.length/2 - 1])/2;
         else
-            median = (double) arr[arr.length/2];
+            median =  arr[arr.length/2];
 
         double sigma = 0.33;
         int lower = (int)(Math.max(0, (1.0 - sigma) * median));

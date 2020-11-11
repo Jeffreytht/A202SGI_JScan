@@ -40,10 +40,6 @@ public class SignUpViewModel extends AndroidViewModel {
         validatePassword();
     }
 
-    public String getConfirm() {
-        return mConfirm;
-    }
-
     public void setConfirm(String confirm) {
         this.mConfirm = confirm;
         errorConfirm.setValue("");

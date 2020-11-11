@@ -1,5 +1,6 @@
 package com.example.jScanner.ui.common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,6 +10,8 @@ import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.jScanner.R;
 import com.example.jScanner.utility.ImageProcessing;
@@ -28,19 +31,21 @@ public class ImageContourSelectorView extends View {
     private final RectF mCroppedBitmapRect = new RectF();
     private final RectF mCanvasRect = new RectF();
     private final Paint paint       = new Paint();
+    private final Context mContext;
 
     // Calibration
     private float mScaleFactor = 1.0f;
-    private android.graphics.Point mOffset = new  android.graphics.Point(0,0);
+    private final android.graphics.Point mOffset = new  android.graphics.Point(0,0);
 
     // Event
     private Point selectedPoint;
 
     //Buffer
-    private int[] mPointCoordinateBuffer = new int[8];
+    private final int[] mPointCoordinateBuffer = new int[8];
 
     public ImageContourSelectorView(Context context) {
         super(context);
+        this.mContext = context;
     }
 
     public void initScene(Bitmap bitmap, Point[] contour)
@@ -105,12 +110,13 @@ public class ImageContourSelectorView extends View {
                 cropWidth
                 , cropHeight
                 , Bitmap.Config.ARGB_8888);
-        mCroppedBitmap.eraseColor(getResources().getColor(R.color.colorDarkGrey));
+        mCroppedBitmap.eraseColor(ContextCompat.getColor(mContext, R.color.colorDarkGrey));
         Canvas canvas = new Canvas(mCroppedBitmap);
 
         canvas.drawBitmap(tempBp,offsetX, offsetY,  null);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean handle = false;
@@ -236,7 +242,7 @@ public class ImageContourSelectorView extends View {
 
         // Draw point border
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(getResources().getColor(R.color.colorCyan));
+        paint.setColor(ContextCompat.getColor(mContext, R.color.colorCyan));
         paint.setStrokeWidth(5);
         for(int i = 0; i < totalPoint; i++)
         {
@@ -252,7 +258,7 @@ public class ImageContourSelectorView extends View {
         }
 
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(getResources().getColor(R.color.colorWhiteTransparent));
+        paint.setColor(ContextCompat.getColor(mContext, R.color.colorWhiteTransparent));
         for(int i = 0; i < totalPoint; i++)
         {
             canvas.drawCircle(mPointCoordinateBuffer[i * 2]
@@ -263,7 +269,7 @@ public class ImageContourSelectorView extends View {
 
         // Draw cross hair and crop image
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(getResources().getColor(R.color.colorCyan));
+        paint.setColor(ContextCompat.getColor(mContext, R.color.colorCyan));
         if(selectedPoint != null) {
             int crossHairLength = (int)(mCroppedBitmapRect.width() * 0.1); // 20% because count from center
             int centerX = (int)mCroppedBitmapRect.centerX();

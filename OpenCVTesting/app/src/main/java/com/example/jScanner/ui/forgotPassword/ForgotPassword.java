@@ -26,10 +26,6 @@ public class ForgotPassword extends Fragment {
     private Button mButtonResetPassword;
     private TextInputEditText mEditTextEmail;
 
-    public static ForgotPassword newInstance() {
-        return new ForgotPassword();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {

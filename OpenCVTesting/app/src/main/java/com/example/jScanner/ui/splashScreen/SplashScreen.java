@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,6 @@ import com.example.jScanner.R;
 public class SplashScreen extends Fragment {
 
     private final String [] PERMISSIONS = {Manifest.permission.CAMERA};
-    public static SplashScreen newInstance() {
-        return new SplashScreen();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,7 +44,7 @@ public class SplashScreen extends Fragment {
             }
         }
 
-        new Handler().postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 NavHostFragment.findNavController(SplashScreen.this).navigate(R.id.action_fragment_splashScreen_to_signIn);
@@ -59,6 +57,6 @@ public class SplashScreen extends Fragment {
         if(requestCode != 1) return;
 
         if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED)
-            getActivity().finish();
+            requireActivity().finish();
     }
 }
