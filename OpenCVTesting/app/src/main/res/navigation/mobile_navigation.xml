@@ -66,16 +66,14 @@
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
-            android:id="@+id/action_signIn_to_fragment_scanner"
-            app:destination="@id/fragment_scanner"
-            app:popUpTo="@id/mobile_navigation"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_fragment_sign_in_to_signUpFragment"
             app:destination="@id/signUpFragment" />
         <action
             android:id="@+id/action_fragment_sign_in_to_forgotPassword"
             app:destination="@id/forgotPassword" />
+        <action
+            android:id="@+id/action_fragment_sign_in_to_dashboard"
+            app:destination="@id/dashboard" />
     </fragment>
     <fragment
         android:id="@+id/documentArrangeFragment"
@@ -96,5 +94,14 @@
         android:name="com.example.jScanner.ui.forgotPassword.ForgotPassword"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/dashboard"
+        android:name="com.example.jScanner.ui.dashboard.Dashboard"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboard_to_fragment_scanner"
+            app:destination="@id/fragment_scanner" />
+    </fragment>
 
 </navigation>

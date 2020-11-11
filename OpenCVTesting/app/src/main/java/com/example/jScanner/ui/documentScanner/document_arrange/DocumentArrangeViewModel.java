@@ -6,11 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
-import com.example.jScanner.ui.documentScanner.document_reader.DocumentReaderFragmentDirections;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 public class DocumentArrangeViewModel extends ViewModel {
 

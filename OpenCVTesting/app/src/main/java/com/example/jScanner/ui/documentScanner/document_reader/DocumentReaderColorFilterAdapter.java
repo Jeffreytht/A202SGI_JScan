@@ -1,6 +1,5 @@
 package com.example.jScanner.ui.documentScanner.document_reader;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;

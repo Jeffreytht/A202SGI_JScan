@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.example.jScanner.R;
 import com.example.jScanner.utility.ImageProcessing;
+
 import org.opencv.core.Point;
 
 public class ImageContourSelectorView extends View {

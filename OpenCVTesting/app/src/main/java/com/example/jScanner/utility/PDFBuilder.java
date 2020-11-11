@@ -7,10 +7,7 @@ import android.graphics.pdf.PdfDocument;
 import com.example.jScanner.Model.ScannedImage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class PDFBuilder {
