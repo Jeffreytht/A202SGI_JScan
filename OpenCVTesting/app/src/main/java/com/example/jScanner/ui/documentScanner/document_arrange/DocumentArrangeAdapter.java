@@ -6,27 +6,34 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
-public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrangeAdapter.DocumentArrangeViewHolder> {
+public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrangeAdapter.DocumentArrangeViewHolder> implements ItemTouchHelperAdapter{
 
     private final Context mContext;
     private final LinkedList<ScannedImage> mScannedDocumentLinkedList;
+    private final ItemTouchHelperViewHolder[] mCallback;
 
     public DocumentArrangeAdapter(Context context, LinkedList<ScannedImage> scannedDocumentLinkedList) {
         mContext = context;
         mScannedDocumentLinkedList = scannedDocumentLinkedList;
+        mCallback = new ItemTouchHelperViewHolder[mScannedDocumentLinkedList.size()];
     }
 
     @NonNull
@@ -44,6 +51,7 @@ public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrange
     @Override
     public void onBindViewHolder(@NonNull DocumentArrangeViewHolder holder, int position) {
         holder.setData(mScannedDocumentLinkedList.get(position).getFinalImage(), position + 1);
+        mCallback[position] = holder;
     }
 
     @Override
@@ -51,7 +59,33 @@ public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrange
         return mScannedDocumentLinkedList.size();
     }
 
-    public class DocumentArrangeViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mScannedDocumentLinkedList, i, i + 1);
+                moveCallBack(i, i+1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mScannedDocumentLinkedList, i, i - 1);
+                moveCallBack(i, i-1);
+            }
+        }
+
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    private void moveCallBack(int oldPos, int newPos){
+        mCallback[oldPos].onItemMove(newPos);
+        mCallback[newPos].onItemMove(oldPos);
+        ItemTouchHelperViewHolder temp = mCallback[oldPos];
+        mCallback[oldPos] = mCallback[newPos];
+        mCallback[newPos] = temp;
+    }
+
+
+    public class DocumentArrangeViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
         private final TextView tvPageNumber;
         private final ImageView mIvDocument;
 
@@ -64,6 +98,11 @@ public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrange
         public void setData(Bitmap bitmap, int pageNumber){
             mIvDocument.setImageBitmap(bitmap);
             tvPageNumber.setText(String.valueOf(pageNumber));
+        }
+
+        @Override
+        public void onItemMove(int newPosition) {
+            tvPageNumber.setText(String.valueOf(newPosition + 1));
         }
     }
 }

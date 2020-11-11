@@ -66,6 +66,8 @@ public class ImageContourSelectorFragment extends Fragment implements View.OnCli
     }
 
 
+
+
     @Override
     public void onClick(View v) {
         int id = v.getId();

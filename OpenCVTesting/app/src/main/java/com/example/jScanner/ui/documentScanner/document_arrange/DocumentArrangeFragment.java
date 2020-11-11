@@ -1,23 +1,22 @@
 package com.example.jScanner.ui.documentScanner.document_arrange;
 
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 
-import java.util.LinkedList;
 
 public class DocumentArrangeFragment extends Fragment {
 
@@ -25,9 +24,7 @@ public class DocumentArrangeFragment extends Fragment {
     private RecyclerView mRvDocumentArrange;
     private DocumentArrangeAdapter mAdapter;
 
-    public static DocumentArrangeFragment newInstance() {
-        return new DocumentArrangeFragment();
-    }
+    public static final String TAG_SCANNED_IMAGE_LIST = "ScannedImageLinkedList";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,10 +43,20 @@ public class DocumentArrangeFragment extends Fragment {
         if(getArguments() != null){
             mViewModel.init(getArguments());
             mAdapter = new DocumentArrangeAdapter(getContext(), mViewModel.getScannedImageList());
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(mRvDocumentArrange);
             mRvDocumentArrange.setAdapter(mAdapter);
             mRvDocumentArrange.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            mRvDocumentArrange.addItemDecoration(new GridSpacingItemDecoration(2,16,true));
         }
 
+        NavBackStackEntry backStack = NavHostFragment.findNavController(this).getPreviousBackStackEntry();
+        if(backStack != null)
+        {
+            SavedStateHandle savedStateHandle = backStack.getSavedStateHandle();
+            savedStateHandle.set(TAG_SCANNED_IMAGE_LIST, mViewModel.getScannedImageList());
+        }
     }
 
 }

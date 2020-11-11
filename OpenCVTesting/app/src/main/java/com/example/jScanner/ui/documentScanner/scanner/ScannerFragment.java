@@ -84,10 +84,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-//        Mat test = new Mat(); // Development
         scannerViewModel.setRGBA(inputFrame.rgba(),getContext());
-//        scannerViewModel.getRGBA().copyTo(test);
-//        ImageProcessing.adaptiveThreshold(test);
         return scannerViewModel.getRGBA();
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.ui.documentScanner.document_reader.DocumentReaderFragmentDirections;
 
@@ -13,14 +14,15 @@ import java.util.List;
 
 public class DocumentArrangeViewModel extends ViewModel {
 
-    private LinkedList<ScannedImage> mScannedImageLinkedList;
+    private ScannedDocument mScannedDocument;
 
     public void init(Bundle bundle){
         DocumentArrangeFragmentArgs args = DocumentArrangeFragmentArgs.fromBundle(bundle);
-        mScannedImageLinkedList =  new LinkedList<>(Arrays.asList(args.getScannedImageList()));
+        mScannedDocument =  args.getScannedDocument();
     }
 
-    public LinkedList<ScannedImage> getScannedImageList(){
-        return mScannedImageLinkedList;
+    public ScannedDocument getScannedDocument(){
+        return mScannedDocument;
     }
+    public LinkedList<ScannedImage> getScannedImageList() {return mScannedDocument.getScannedImageList();}
 }

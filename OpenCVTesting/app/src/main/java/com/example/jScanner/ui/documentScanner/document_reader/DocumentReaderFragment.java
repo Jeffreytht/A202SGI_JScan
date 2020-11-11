@@ -4,6 +4,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,19 +24,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
+import com.example.jScanner.Callback.DatabaseCallback;
 import com.example.jScanner.Callback.DocumentColorFilterCallback;
+import com.example.jScanner.MainActivity;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
+import com.example.jScanner.utility.Database;
+import com.example.jScanner.utility.User;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.Blob;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener, ScannedImageFinishPreComputeCallback {
 
     private DocumentPreviewAdapter mDocumentPreviewAdapter;
     private ViewPager2 mViewPagerDocumentPreview;
-    private Button mButtonRotateLeft, mButtonRotateRight, mButtonCrop, mButtonColorFilter, mButtonReorder;
+    private Button mButtonRotateLeft, mButtonRotateRight, mButtonCrop, mButtonColorFilter, mButtonReorder, mButtonRemove;
     private RecyclerView mRecyclerViewColorFilter;
     private DocumentReaderColorFilterAdapter mDocumentReaderColorFilterAdapter;
     private DocumentReaderViewModel mViewModel;
@@ -51,6 +62,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mButtonRotateRight          = view.findViewById(R.id.button_rotateRight);
         mButtonColorFilter          = view.findViewById(R.id.button_colorFilter);
         mButtonReorder              = view.findViewById(R.id.button_reorder);
+        mButtonRemove               = view.findViewById(R.id.button_remove);
         mRecyclerViewColorFilter    = view.findViewById(R.id.recyclerView_colorFilter);
         mViewModel                  = ViewModelProviders.of(this).get(DocumentReaderViewModel.class);
         mViewModel.setBackStackEntry(NavHostFragment.findNavController(this),getViewLifecycleOwner());
@@ -60,6 +72,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mButtonCrop         .setOnClickListener(this);
         mButtonColorFilter  .setOnClickListener(this);
         mButtonReorder      .setOnClickListener(this);
+        mButtonRemove       .setOnClickListener(this);
 
         mDocumentReaderColorFilterAdapter = new DocumentReaderColorFilterAdapter(this);
         mRecyclerViewColorFilter.setAdapter(mDocumentReaderColorFilterAdapter);
@@ -117,7 +130,37 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.save){
-            mViewModel.createPDF(getContext().getFilesDir().getPath());
+            final EditText mEditTextFileName = new EditText(getContext());
+            float density = getResources().getDisplayMetrics().density;
+
+            LinearLayout linearLayout =new LinearLayout(getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            linearLayout.setPadding((int)(16 * density),0,(int)(16 * density),0);
+
+            mEditTextFileName.setHint("File name");
+
+            mEditTextFileName.setTextColor(getContext().getColor(R.color.colorPrimary));
+            mEditTextFileName.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            if(mViewModel.isDocumentNameSet())
+                mEditTextFileName.setText(mViewModel.getDocumentName());
+
+            linearLayout.addView(mEditTextFileName);
+
+            new MaterialAlertDialogBuilder(getContext())
+                    .setTitle("Save as")
+                    .setView(linearLayout)
+                    .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((MainActivity) getActivity()).showProgressDialog("Creating PDF");
+
+                            mViewModel.setDocumentName(mEditTextFileName.getText().toString());
+                            Database.insertNewDocument(User.getUser(), mViewModel.getScannedDocument().getValue());
+
+                            ((MainActivity) getActivity()).dismissProgressDialog();
+                        }
+                    }).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -154,9 +197,24 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
                 mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
         }
         else if(id == mButtonReorder.getId()){
-            LinkedList<ScannedImage> scannedImageLinkedList = mViewModel.getScannedDocument().getValue().getScannedImageList();
-            DocumentReaderFragmentDirections.ActionFragmentDocumentReaderToDocumentArrangeFragment action = DocumentReaderFragmentDirections.actionFragmentDocumentReaderToDocumentArrangeFragment(scannedImageLinkedList.toArray(new ScannedImage[scannedImageLinkedList.size()]));
-            NavHostFragment.findNavController(this).navigate(action);
+            if(mViewModel.getScannedDocument().getValue() != null) {
+                DocumentReaderFragmentDirections.ActionFragmentDocumentReaderToDocumentArrangeFragment action = DocumentReaderFragmentDirections.actionFragmentDocumentReaderToDocumentArrangeFragment(mViewModel.getScannedDocument().getValue());
+                NavHostFragment.findNavController(this).navigate(action);
+            }
+        } else if(id == mButtonRemove.getId()){
+            mViewModel.removeScannedImage(mViewModel.getCurrentSelectedImage());
+            int totalImage = mViewModel.getNumOfScannedImage();
+            if(totalImage == 0) {
+                NavHostFragment.findNavController(this).popBackStack();
+            } else {
+                int currIndex = mViewModel.getViewPagerCurrentIndex();
+                mDocumentPreviewAdapter.notifyItemRemoved(currIndex);
+
+                if(currIndex == totalImage)
+                    mViewModel.setViewPagerCurrentIndex(currIndex - 1);
+
+                mDocumentReaderColorFilterAdapter.setData(getContext(), mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
+            }
         }
     }
 
@@ -174,11 +232,18 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     }
 
     @Override
-    public void refreshUi() {
-        getActivity().runOnUiThread(new Runnable() {
+    public void refreshUi(final int curr,final int total) {
+        final MainActivity activity = (MainActivity)getActivity();
+        if(activity == null) return;
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
+                if(curr == total){
+                    mDocumentReaderColorFilterAdapter.setData(getContext(),mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
+                    activity.dismissProgressDialog();
+                } else {
+                    activity.updateProgressDialog("Page " + curr + " of " + total);
+                }
             }
         });
     }
@@ -189,4 +254,5 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         super.onDestroyView();
         mViewModel.stopAsync();
     }
+
 }

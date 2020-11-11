@@ -53,11 +53,12 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/mdBtnSignIn"
+        android:id="@+id/mdBtnResetPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorCyan"
         android:drawableStart="@drawable/logo_no_text"
         android:text="@string/label_signIn"
@@ -68,7 +69,7 @@
         app:backgroundTint="@color/colorCyan"
         app:layout_constraintEnd_toEndOf="@+id/mdTextField_password"
         app:layout_constraintStart_toStartOf="@+id/mdTextField_password"
-        app:layout_constraintTop_toBottomOf="@+id/mdTextField_password">
+        app:layout_constraintTop_toBottomOf="@+id/mdBtnForgetPassword">
 
     </com.google.android.material.button.MaterialButton>
 
@@ -77,8 +78,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/mdBtnSignIn"
-        app:layout_constraintStart_toStartOf="@+id/mdBtnSignIn"
+        app:layout_constraintEnd_toEndOf="@+id/mdBtnResetPassword"
+        app:layout_constraintStart_toStartOf="@+id/mdBtnResetPassword"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
@@ -86,15 +87,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_dont_have_account"
-        app:layout_constraintBottom_toBottomOf="@+id/materialButton2"
-        app:layout_constraintEnd_toStartOf="@+id/materialButton2"
+        app:layout_constraintBottom_toBottomOf="@+id/mdBtnSignUpNow"
+        app:layout_constraintEnd_toStartOf="@+id/mdBtnSignUpNow"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/materialButton2" />
+        app:layout_constraintTop_toTopOf="@+id/mdBtnSignUpNow" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton2"
+        android:id="@+id/mdBtnSignUpNow"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -105,7 +106,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/mdBtnSignIn" />
+        app:layout_constraintTop_toBottomOf="@+id/mdBtnResetPassword" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mdBtnForgetPassword"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_forgotPassword"
+        android:textAllCaps="false"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="@+id/mdTextField_password"
+        app:layout_constraintTop_toBottomOf="@+id/mdTextField_password" />
+
 
     <View
         android:id="@+id/view"
@@ -130,7 +143,7 @@
         app:layout_constraintEnd_toStartOf="@+id/view2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/materialButton2" />
+        app:layout_constraintTop_toBottomOf="@+id/mdBtnSignUpNow" />
 
     <View
         android:id="@+id/view2"

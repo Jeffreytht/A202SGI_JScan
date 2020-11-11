@@ -1,7 +1,7 @@
 package com.example.jScanner;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.Menu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -17,6 +16,7 @@ import com.example.jScanner.utility.User;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
 
+    ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
        // NavigationUI.setupWithNavController(navView, navController);
         navController.addOnDestinationChangedListener(this);
-
     }
 
     @Override
@@ -46,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         else if(destId == R.id.fragment_navigation_image_contour_selector)
             showActionBar();
         else if(destId == R.id.fragment_scanner)
+            showActionBar();
+        else if(destId == R.id.fragment_sign_in)
             hideActionBar();
     }
 
@@ -63,6 +64,24 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     public boolean onSupportNavigateUp() {
         return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp()
                 || super.onSupportNavigateUp();
+    }
 
+    public void showProgressDialog(CharSequence s){
+        if(mProgressDialog == null){
+            mProgressDialog = ProgressDialog.show(this,"",s);
+        }
+    }
+
+    public void updateProgressDialog(CharSequence s){
+        if(mProgressDialog == null) showProgressDialog(s);
+        else{
+            mProgressDialog.setMessage(s);
+        }
+    }
+
+    public void dismissProgressDialog(){
+        if(mProgressDialog != null)
+            mProgressDialog.dismiss();
+        mProgressDialog = null;
     }
 }

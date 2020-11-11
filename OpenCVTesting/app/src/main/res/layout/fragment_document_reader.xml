@@ -7,26 +7,12 @@
     android:background="@color/colorPrimary"
     tools:context=".ui.documentScanner.document_reader.DocumentReaderFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorDarkGrey"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,85 +20,103 @@
 
     </androidx.viewpager2.widget.ViewPager2>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal"
+        android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_crop"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:drawableTop="@drawable/ic_baseline_crop_24"
-            android:elevation="0dp"
-            android:text="@string/label_crop"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            android:layout_height="match_parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_rotateLeft"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:drawableTop="@drawable/ic_rotate_left_white_24dp"
-            android:text="@string/label_left"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_crop"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_baseline_crop_24"
+                android:elevation="0dp"
+                android:text="@string/label_crop"
+                android:textColor="@color/colorDark"
+                android:textSize="10sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_rotateRight"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:drawableTop="@drawable/ic_rotate_right_white_24dp"
-            android:text="@string/label_right"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_rotateLeft"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_rotate_left_white_24dp"
+                android:text="@string/label_left"
+                android:textColor="@color/colorDark"
+                android:textSize="10sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_colorFilter"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:drawableTop="@drawable/ic_color_lens_24px"
-            android:text="@string/label_color"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_rotateRight"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_rotate_right_white_24dp"
+                android:text="@string/label_right"
+                android:textColor="@color/colorDark"
+                android:textSize="10sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_reorder"
-            style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_baseline_reorder_24"
-            android:fontFamily="@font/roboto"
-            android:text="@string/label_reorder"
-            android:textColor="@color/colorWhite"
-            android:textSize="10sp" />
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_remove"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_baseline_close_24"
+                android:text="@string/label_delete"
+                android:textAllCaps="true"
+                android:textSize="10sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_colorFilter"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_color_lens_24px"
+                android:text="@string/label_color"
+                android:textColor="@color/colorDark"
+                android:textSize="10sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_reorder"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_baseline_reorder_24"
+                android:fontFamily="@font/roboto"
+                android:text="@string/label_reorder"
+                android:textColor="@color/colorWhite"
+                android:textSize="10sp" />
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_colorFilter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
         android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

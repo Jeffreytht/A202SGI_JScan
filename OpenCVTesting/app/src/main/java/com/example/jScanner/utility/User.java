@@ -1,9 +1,7 @@
 package com.example.jScanner.utility;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -32,7 +30,6 @@ public class User implements OnCompleteListener<AuthResult>{
     private static User instance;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private GoogleSignInClient mSignInClient;
-    private FirebaseUser mUser;
     private final MutableLiveData<SignInResult> mSignInResult = new MutableLiveData<>();
 
     public static void init(Context context){
@@ -50,6 +47,35 @@ public class User implements OnCompleteListener<AuthResult>{
         instance.mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(instance);
     }
 
+    public static void resetPasswordWithEmail(String email){
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                final boolean isSignInSuccess = task.isSuccessful();
+                final String message;
+
+                if (!task.isSuccessful()) {
+                    message = task.getException().getMessage();
+                } else {
+                    message = "An email has been sent to your email account. Kindly check your email to reset the password.";
+                }
+
+                instance.mSignInResult.setValue(new SignInResult() {
+                    @Override
+                    public boolean isSuccess() {
+                        return isSignInSuccess;
+                    }
+
+                    @Override
+                    public String getErrorMessage() {
+                        return message;
+                    }
+                });
+            }
+        });
+    }
+
     public static void signUpNewUser( String email, String password){
         instance.mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(instance);
     }
@@ -57,6 +83,7 @@ public class User implements OnCompleteListener<AuthResult>{
     public static LiveData<SignInResult> getSignInResult(){
         return instance.mSignInResult;
     }
+
 
     public static void signInWithGoogle(Intent data){
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -83,6 +110,10 @@ public class User implements OnCompleteListener<AuthResult>{
         return instance.mSignInClient.getSignInIntent();
     }
 
+    public static FirebaseUser getUser(){
+        return instance.mAuth.getCurrentUser();
+    }
+
 
     @Override
     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -91,8 +122,8 @@ public class User implements OnCompleteListener<AuthResult>{
         final String errorMessage;
 
         if (task.isSuccessful()) {
-            instance.mUser = instance.mAuth.getCurrentUser();
             errorMessage = "";
+            Database.insertNewUser(User.getUser());
         } else if(task.getException() != null){
             errorMessage = task.getException().getMessage();
         } else {

@@ -1,14 +1,17 @@
 <resources>
+    <!-- title -->
     <string name="app_name">JScanner</string>
     <string name="title_scanner">Scanner</string>
     <string name="title_image_editor">Image Editor</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_document_preview">Preview</string>
+    <string name="title_fragment_rearrange">Rearrange</string>
 
     <!-- label -->
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>
     <string name="label_signIn">Sign In</string>
+    <string name="label_signUp">Sign Up</string>
     <string name="label_dont_have_account">Don\'t have an account?</string>
     <string name="label_signUp_now">Sign up now</string>
     <string name="label_or">or</string>
@@ -17,11 +20,19 @@
     <string name="label_right">Right</string>
     <string name="label_left">Left</string>
     <string name="label_crop">Crop</string>
-
+    <string name="label_reorder">Reorder</string>
+    <string name="label_delete">Delete</string>
+    <string name="label_confirmPassword">Confirm</string>
 
     <!-- error message -->
     <string name="error_email_empty">Email cannot be empty</string>
     <string name="error_password_empty">Password cannot be empty</string>
-    <string name="label_reorder">Reorder</string>
+    <string name="error_confirm_empty">Confirm cannot be empty</string>
+    <string name="error_confirm_not_match">Confirm does not match password</string>
+    <string name="msg_signUpSuccess">Sign up successfully</string>
+    <string name="msg_signInSuccess">Sign in successfully</string>
+    <string name="label_forgotPassword">Forgot password?</string>
+    <string name="label_resetPassword">Reset Password</string>
+
 
 </resources>

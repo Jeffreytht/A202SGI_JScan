@@ -34,6 +34,13 @@ public class ScannedImage implements  Parcelable{
         mFilter     = ImageProcessing.COLORFILTER_COLOR;
     }
 
+    ScannedImage(int id, Bitmap oriImage, Point[] contour, int filter){
+        mId         = id;
+        mOriImage   = oriImage;
+        mContour    = contour;
+        mFilter     = filter;
+    }
+
     public int getId(){return mId;}
 
     public int getFilter() {

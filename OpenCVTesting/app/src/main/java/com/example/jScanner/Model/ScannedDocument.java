@@ -10,8 +10,15 @@ import java.util.LinkedList;
 
 public class ScannedDocument implements Parcelable {
     private LinkedList<ScannedImage> mScannedImageList = new LinkedList<>();
+    private String mName;
+    private String mId;
 
     protected ScannedDocument(Parcel in) {
+    }
+
+    public ScannedDocument(LinkedList<ScannedImage> scannedImages, String name){
+        mScannedImageList = scannedImages;
+        mName = name;
     }
 
     public static final Creator<ScannedDocument> CREATOR = new Creator<ScannedDocument>() {
@@ -36,6 +43,22 @@ public class ScannedDocument implements Parcelable {
 
     public void setScannedImageList(LinkedList<ScannedImage> mScannedImageList) {
         this.mScannedImageList = mScannedImageList;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String mId) {
+        this.mId = mId;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        this.mName = name;
     }
 
     public void addScannedImage(Bitmap oriImage, Point[] contour)

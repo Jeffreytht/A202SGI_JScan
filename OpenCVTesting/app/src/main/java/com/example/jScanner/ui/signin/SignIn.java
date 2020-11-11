@@ -1,5 +1,6 @@
 package com.example.jScanner.ui.signin;
 import com.example.jScanner.Callback.SignInResult;
+import com.example.jScanner.MainActivity;
 import com.example.jScanner.utility.User;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.button.MaterialButton;
@@ -26,13 +27,11 @@ import android.widget.Toast;
 import com.example.jScanner.R;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.Optional;
-
 public class SignIn extends Fragment implements View.OnClickListener{
 
     private SignInViewModel mViewModel;
     private SignInButton mGoogleSignInButton;
-    private MaterialButton mSignInButton;
+    private MaterialButton mSignInButton, mBtnSignUpNow, mBtnForgotPassword;
     private TextInputEditText mEmailEditText;
     private TextInputEditText mPasswordEditText;
 
@@ -43,10 +42,12 @@ public class SignIn extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
-        mSignInButton       = view.findViewById(R.id.mdBtnSignIn);
+        mSignInButton       = view.findViewById(R.id.mdBtnResetPassword);
         mEmailEditText      = view.findViewById(R.id.mdEditText_email);
         mPasswordEditText   = view.findViewById(R.id.mdEditText_password);
+        mBtnSignUpNow       = view.findViewById(R.id.mdBtnSignUpNow);
         mGoogleSignInButton = view.findViewById(R.id.btnGoogleSignIn);
+        mBtnForgotPassword  = view.findViewById(R.id.mdBtnForgetPassword);
         return view;
     }
 
@@ -56,6 +57,8 @@ public class SignIn extends Fragment implements View.OnClickListener{
         mViewModel = new ViewModelProvider(this).get(SignInViewModel.class);
         mGoogleSignInButton.setOnClickListener(this);
         mSignInButton.setOnClickListener(this);
+        mBtnSignUpNow.setOnClickListener(this);
+        mBtnForgotPassword.setOnClickListener(this);
 
         mEmailEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -106,9 +109,12 @@ public class SignIn extends Fragment implements View.OnClickListener{
         User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResult>() {
             @Override
             public void onChanged(SignInResult signInResult) {
+                ((MainActivity) getActivity()).dismissProgressDialog();
                 if(signInResult.isSuccess()){
-                    Toast.makeText(getContext(), "Sign in successfully", Toast.LENGTH_SHORT).show();
-                    NavHostFragment.findNavController(SignIn.this).navigate(R.id.action_signIn_to_fragment_scanner);
+                    Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
+                    NavController navController =  NavHostFragment.findNavController(SignIn.this);
+
+                    navController.navigate(R.id.action_signIn_to_fragment_scanner);
                 } else {
                     Toast.makeText(getContext(), signInResult.getErrorMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -119,12 +125,17 @@ public class SignIn extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId() == mSignInButton.getId()){
-            if(mViewModel.validate())
+            if(mViewModel.validate()) {
+                ((MainActivity) getActivity()).showProgressDialog("Signing in");
                 User.signInWithEmailAndPassword(mViewModel.getEmail(), mViewModel.getPassword());
-
+            }
         } else if(v.getId() == mGoogleSignInButton.getId()){
             Intent intent = User.getGoogleSignInIntent();
             startActivityForResult(intent,GOOGLE_SIGN_IN_REQUEST_CODE);
+        } else if(v.getId() == mBtnSignUpNow.getId()){
+            NavHostFragment.findNavController(this).navigate(R.id.action_fragment_sign_in_to_signUpFragment);
+        } else if(v.getId() == mBtnForgotPassword.getId()){
+            NavHostFragment.findNavController(this).navigate(R.id.action_fragment_sign_in_to_forgotPassword);
         }
     }
 
@@ -132,9 +143,8 @@ public class SignIn extends Fragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == GOOGLE_SIGN_IN_REQUEST_CODE){
+            ((MainActivity) getActivity()).showProgressDialog("Signing in");
             User.signInWithGoogle(data);
         }
     }
-
-
 }
