@@ -9,12 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jScanner.R;
 
 public class Dashboard extends Fragment {
 
     private DashboardViewModel mViewModel;
+    private RecyclerView mRvDocumentList;
 
     public static Dashboard newInstance() {
         return new Dashboard();
@@ -23,7 +25,9 @@ public class Dashboard extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        mRvDocumentList = view.findViewById(R.id.rv_document_list);
+        return view;
     }
 
     @Override

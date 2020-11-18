@@ -112,7 +112,6 @@ public class SignIn extends Fragment implements View.OnClickListener{
                 if(signInResult.isSuccess()){
                     Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
                     NavController navController =  NavHostFragment.findNavController(SignIn.this);
-
                     navController.navigate(R.id.action_fragment_sign_in_to_dashboard);
                 } else {
                     Toast.makeText(getContext(), signInResult.getErrorMessage(), Toast.LENGTH_LONG).show();

@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             showActionBar();
         else if(destId == R.id.fragment_sign_in)
             hideActionBar();
+        else if(destId == R.id.fragment_dashboard)
+            showActionBar();
     }
 
     private void hideActionBar(){

@@ -73,7 +73,10 @@
             app:destination="@id/forgotPassword" />
         <action
             android:id="@+id/action_fragment_sign_in_to_dashboard"
-            app:destination="@id/dashboard" />
+            app:destination="@id/fragment_dashboard"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mobile_navigation"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/documentArrangeFragment"
@@ -95,7 +98,7 @@
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
     <fragment
-        android:id="@+id/dashboard"
+        android:id="@+id/fragment_dashboard"
         android:name="com.example.jScanner.ui.dashboard.Dashboard"
         android:label="fragment_dashboard"
         tools:layout="@layout/fragment_dashboard" >

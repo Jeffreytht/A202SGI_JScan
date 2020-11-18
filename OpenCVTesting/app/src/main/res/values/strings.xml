@@ -23,6 +23,11 @@
     <string name="label_reorder">Reorder</string>
     <string name="label_delete">Delete</string>
     <string name="label_confirmPassword">Confirm</string>
+    <string name="label_forgotPassword">Forgot password?</string>
+    <string name="label_resetPassword">Reset Password</string>
+    <string name="label_share">Share</string>
+    <string name="label_rename">Rename</string>
+    <string name="label_modify">Modify</string>
 
     <!-- error message -->
     <string name="error_email_empty">Email cannot be empty</string>
@@ -31,8 +36,4 @@
     <string name="error_confirm_not_match">Confirm does not match password</string>
     <string name="msg_signUpSuccess">Sign up successfully</string>
     <string name="msg_signInSuccess">Sign in successfully</string>
-    <string name="label_forgotPassword">Forgot password?</string>
-    <string name="label_resetPassword">Reset Password</string>
-
-
 </resources>
