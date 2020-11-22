@@ -22,6 +22,23 @@ public class Point implements Parcelable {
         set(vals);
     }
 
+    protected Point(Parcel in) {
+        x = in.readDouble();
+        y = in.readDouble();
+    }
+
+    public static final Creator<Point> CREATOR = new Creator<Point>() {
+        @Override
+        public Point createFromParcel(Parcel in) {
+            return new Point(in);
+        }
+
+        @Override
+        public Point[] newArray(int size) {
+            return new Point[size];
+        }
+    };
+
     public void set(double[] vals) {
         if (vals != null) {
             x = vals.length > 0 ? vals[0] : 0;
@@ -76,6 +93,7 @@ public class Point implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeDouble(x);
+        parcel.writeDouble(y);
     }
 }

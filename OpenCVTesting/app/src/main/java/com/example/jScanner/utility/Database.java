@@ -1,10 +1,12 @@
 package com.example.jScanner.utility;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.jScanner.Callback.DbGetDocumentCallback;
+import com.example.jScanner.Callback.StorageImageListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.google.android.gms.tasks.Continuation;
@@ -57,7 +59,7 @@ public class Database {
                 .collection(COL_DOCUMENT).document(scannedDocument.getId())
                 .collection(COL_IMAGES);
 
-        final LinkedList<ScannedImage> scannedImageLinkedList = scannedDocument.getScannedImageList();
+        final List<ScannedImage> scannedImageLinkedList = scannedDocument.getScannedImageList();
 
         ref.get().continueWith(new Continuation<QuerySnapshot, Object>() {
             @Override
@@ -74,7 +76,7 @@ public class Database {
 
                 int seq = 1;
                 // Upload cover for document list in dashboard
-                Storage.uploadImage(id + "/cover.bmp", scannedImageLinkedList.getFirst().getFinalImage());
+                Storage.uploadImage(id + "/cover.bmp", scannedImageLinkedList.get(0).getFinalImage());
 
                 for (ScannedImage si : scannedImageLinkedList) {
                     String path = id + "/" + seq + ".bmp";
@@ -129,11 +131,16 @@ public class Database {
         collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                ArrayList<ScannedDocument> scannedDocuments = new ArrayList<>();
+                final ArrayList<ScannedDocument> scannedDocuments = new ArrayList<>();
                 List<DocumentSnapshot> documentSnapshotList = Objects.requireNonNull(task.getResult()).getDocuments();
                 for (DocumentSnapshot s : documentSnapshotList) {
                     scannedDocuments.add(new ScannedDocument(s.getId(), Objects.requireNonNull(s.get(FLD_FILE_NAME)).toString()));
-                    Storage.getImage(s.getId() + "/cover.bmp");
+                    Storage.getImage(s.getId() + "/cover.bmp", new StorageImageListener() {
+                        @Override
+                        public void onStorageImageReceived(Uri uri) {
+//                            scannedDocuments.se
+                        }
+                    });
                 }
 
                 //callback.onDocumentReceived(scannedDocuments);

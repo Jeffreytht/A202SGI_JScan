@@ -119,7 +119,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
         else if(v.getId() == mBtnDocument.getId())
         {
             final ScannedDocument scannedDocument = scannerViewModel.getScannedDocument();
-            if(scannedDocument.isEmpty()) return;
+            if(scannedDocument.getTotalPages() == 0) return;
 
             ScannerFragmentDirections.ActionNavigationScannerToDocumentReaderFragment action
                     = ScannerFragmentDirections.actionNavigationScannerToDocumentReaderFragment(scannedDocument);

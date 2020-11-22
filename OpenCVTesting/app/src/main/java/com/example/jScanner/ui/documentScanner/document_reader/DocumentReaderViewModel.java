@@ -65,7 +65,7 @@ public class DocumentReaderViewModel extends ViewModel {
     }
 
     public int getNumOfScannedImage() {
-        return (mScannedDocument.getValue() != null) ? mScannedDocument.getValue().size() : 0;
+        return (mScannedDocument.getValue() != null) ? mScannedDocument.getValue().getTotalPages() : 0;
     }
 
     public String getDocumentName() {
@@ -126,7 +126,7 @@ public class DocumentReaderViewModel extends ViewModel {
                             ScannedImage scannedImage = mScannedDocument.getValue().getScannedImageList().get(mViewPagerCurrentIndex);
                             scannedImage.setOriImage(oriBitmapLiveData);
                             scannedImage.setContour(contourLiveData);
-                            mScannedImageBuffer.put(scannedImage, scannedImage.getAllFilterBitmap());
+                            mScannedImageBuffer.put(scannedImage, scannedImage.getFilteredBitmaps());
                             clearBuffer(navController);
                         } else if (integer == ImageContourSelectorViewModel.DISCARD_IMAGE) {
                             clearBuffer(navController);

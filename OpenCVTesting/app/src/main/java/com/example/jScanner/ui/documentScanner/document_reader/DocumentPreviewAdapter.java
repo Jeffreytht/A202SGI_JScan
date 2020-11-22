@@ -21,9 +21,10 @@ import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class DocumentPreviewAdapter extends RecyclerView.Adapter<DocumentPreviewAdapter.DocumentHolder> {
-    private LinkedList<ScannedImage>mScannedImage;
+    private List<ScannedImage>mScannedImage;
     private Context mContext;
     private final ViewPager2 mParent;
 
@@ -33,7 +34,7 @@ public class DocumentPreviewAdapter extends RecyclerView.Adapter<DocumentPreview
         mParent = parent;
     }
 
-    public void setData(Context context, LinkedList<ScannedImage>scannedImages)
+    public void setData(Context context, List<ScannedImage> scannedImages)
     {
         mScannedImage = scannedImages;
         mContext = context;

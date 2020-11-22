@@ -13,12 +13,15 @@ import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 
 import com.example.jScanner.Model.ScannedDocument;
+import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.ui.documentScanner.image_contour_selector.ImageContourSelectorViewModel;
 import com.example.jScanner.utility.ImageProcessing;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+
+import java.util.List;
 
 public class ScannerViewModel extends ViewModel {
 
@@ -79,7 +82,7 @@ public class ScannerViewModel extends ViewModel {
                 public void onChanged(Integer integer) {
                     if(integer== ImageContourSelectorViewModel.ADD_IMAGE) {
                         mScannedDocument.addScannedImage(oriBitmapLiveData, contourLiveData);
-                        mButtonBitmap.setValue(mScannedDocument.getScannedImageList().getLast().getFinalImage());
+                        mButtonBitmap.setValue(mScannedDocument.getScannedImageList().get(mScannedDocument.getScannedImageList().size() - 1).getFinalImage());
                         clearBuffer(navController);
                     }
                     else if(integer == ImageContourSelectorViewModel.DISCARD_IMAGE)

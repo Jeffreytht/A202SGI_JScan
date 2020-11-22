@@ -8,6 +8,7 @@ import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class DocumentArrangeViewModel extends ViewModel {
 
@@ -18,5 +19,5 @@ public class DocumentArrangeViewModel extends ViewModel {
         mScannedDocument =  args.getScannedDocument();
     }
 
-    public LinkedList<ScannedImage> getScannedImageList() {return mScannedDocument.getScannedImageList();}
+    public List<ScannedImage> getScannedImageList() {return mScannedDocument.getScannedImageList();}
 }

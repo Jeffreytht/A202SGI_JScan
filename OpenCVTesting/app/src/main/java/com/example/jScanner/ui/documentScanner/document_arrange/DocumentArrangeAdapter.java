@@ -15,14 +15,15 @@ import com.example.jScanner.ui.documentScanner.document_reader.DocumentArrangeVi
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DocumentArrangeAdapter extends RecyclerView.Adapter<DocumentArrangeViewHolder> implements ItemTouchHelperAdapter{
 
     private final Context mContext;
-    private final LinkedList<ScannedImage> mScannedDocumentLinkedList;
+    private final List<ScannedImage> mScannedDocumentLinkedList;
     private final ItemTouchHelperViewHolder[] mCallback;
 
-    public DocumentArrangeAdapter(Context context, LinkedList<ScannedImage> scannedDocumentLinkedList) {
+    public DocumentArrangeAdapter(Context context, List<ScannedImage> scannedDocumentLinkedList) {
         mContext = context;
         mScannedDocumentLinkedList = scannedDocumentLinkedList;
         mCallback = new ItemTouchHelperViewHolder[mScannedDocumentLinkedList.size()];

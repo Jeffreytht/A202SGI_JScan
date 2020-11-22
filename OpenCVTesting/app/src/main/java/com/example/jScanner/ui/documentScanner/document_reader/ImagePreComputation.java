@@ -28,7 +28,7 @@ public class ImagePreComputation extends AsyncTask<ScannedDocument, Integer, Voi
 
         for (int imageIdx = 0; imageIdx < totalImage; imageIdx++) {
             ScannedImage si = mScannedImageList.get(imageIdx);
-            mScannedImageBuffer.put(si, si.getAllFilterBitmap());
+            mScannedImageBuffer.put(si, si.getFilteredBitmaps());
             mCallback.refreshUi(imageIdx + 1, totalImage);
         }
         return null;
