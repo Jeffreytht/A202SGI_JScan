@@ -37,6 +37,11 @@ public class ScannedDocument implements Parcelable {
         this.mScannedImageList = new LinkedList<>();
     }
 
+    public ScannedDocument(String id, String name) {
+        this.mId = id;
+        this.mName = name;
+    }
+
     public LinkedList<ScannedImage> getScannedImageList() {
         return mScannedImageList;
     }

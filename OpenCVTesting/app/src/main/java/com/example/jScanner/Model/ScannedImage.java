@@ -14,24 +14,16 @@ import java.util.Map;
 
 public class ScannedImage implements  Parcelable{
 
-    private static int idCounter = 1;
-
-    private int mId;
     private Bitmap mOriImage;
     private Point[] mContour;
     private int mFilter;
 
-
     ScannedImage(Bitmap oriImage, Point[] contour)
     {
-        mId         = idCounter++;
         mOriImage   = oriImage;
         mContour    = contour;
         mFilter     = ImageProcessing.COLORFILTER_COLOR;
     }
-
-
-    public int getId(){return mId;}
 
     public int getFilter() {
         return mFilter;
@@ -100,4 +92,5 @@ public class ScannedImage implements  Parcelable{
 
         return bmp;
     }
+
 }

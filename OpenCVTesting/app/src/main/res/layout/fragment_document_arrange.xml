@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDarkGrey"
+    android:background="@color/colorSecondaryBackground"
     tools:context=".ui.documentScanner.document_arrange.DocumentArrangeFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_document_arrange"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorSecondaryBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -14,9 +14,9 @@ public class ImagePreComputation extends AsyncTask<ScannedDocument, Integer, Voi
 
     private final ScannedImageFinishPreComputeCallback mCallback;
     private final List<ScannedImage> mScannedImageList;
-    private final HashMap<Integer, Bitmap[]> mScannedImageBuffer;
+    private final HashMap<ScannedImage, Bitmap[]> mScannedImageBuffer;
 
-    public ImagePreComputation(List<ScannedImage> scannedImageList, ScannedImageFinishPreComputeCallback callback, HashMap<Integer, Bitmap[]> scannedImageBuffer) {
+    public ImagePreComputation(List<ScannedImage> scannedImageList, ScannedImageFinishPreComputeCallback callback, HashMap<ScannedImage, Bitmap[]> scannedImageBuffer) {
         this.mCallback = callback;
         this.mScannedImageList = scannedImageList;
         this.mScannedImageBuffer = scannedImageBuffer;
@@ -28,7 +28,7 @@ public class ImagePreComputation extends AsyncTask<ScannedDocument, Integer, Voi
 
         for (int imageIdx = 0; imageIdx < totalImage; imageIdx++) {
             ScannedImage si = mScannedImageList.get(imageIdx);
-            mScannedImageBuffer.put(si.getId(), si.getAllFilterBitmap());
+            mScannedImageBuffer.put(si, si.getAllFilterBitmap());
             mCallback.refreshUi(imageIdx + 1, totalImage);
         }
         return null;

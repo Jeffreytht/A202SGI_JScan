@@ -26,7 +26,7 @@ import java.util.Objects;
 public class DocumentReaderViewModel extends ViewModel {
 
     private final MutableLiveData<ScannedDocument> mScannedDocument;
-    private final HashMap<Integer, Bitmap[]> mScannedImageBuffer = new HashMap<>();
+    private final HashMap<ScannedImage, Bitmap[]> mScannedImageBuffer = new HashMap<>();
     private ImagePreComputation mImagePreComputationAsync;
 
     //Buffer
@@ -82,10 +82,10 @@ public class DocumentReaderViewModel extends ViewModel {
             return;
 
         ScannedImage scannedImage = mScannedDocument.getValue().getScannedImageList().get(index);
-        Bitmap[] bufferImage = Objects.requireNonNull(mScannedImageBuffer.get(scannedImage.getId()));
+        Bitmap[] bufferImage = Objects.requireNonNull(mScannedImageBuffer.get(scannedImage));
         Bitmap[] bmpArr = {scannedImage.getOriImage(), bufferImage[0], bufferImage[1], bufferImage[2]};
         ImageProcessing.rotateBitmapNContour(bmpArr, scannedImage.getContour(), degree);
-        mScannedImageBuffer.put(scannedImage.getId(), new Bitmap[]{bmpArr[1], bmpArr[2], bmpArr[3]});
+        mScannedImageBuffer.put(scannedImage, new Bitmap[]{bmpArr[1], bmpArr[2], bmpArr[3]});
         scannedImage.setOriImage(bmpArr[0]);
     }
 
@@ -96,16 +96,16 @@ public class DocumentReaderViewModel extends ViewModel {
 
     Bitmap[] getCurrentSelectedFilteredImage() {
         if (mScannedDocument.getValue() == null) return null;
-        int scannedDocumentId = mScannedDocument.getValue().getScannedImageList().get(getViewPagerCurrentIndex()).getId();
-        if (mScannedImageBuffer.containsKey(scannedDocumentId))
-            return mScannedImageBuffer.get(scannedDocumentId);
+        ScannedImage scannedImage = mScannedDocument.getValue().getScannedImageList().get(getViewPagerCurrentIndex());
+        if (mScannedImageBuffer.containsKey(scannedImage))
+            return mScannedImageBuffer.get(scannedImage);
         return null;
     }
 
     void removeScannedImage(ScannedImage image) {
         if (mScannedDocument.getValue() != null) {
             mScannedDocument.getValue().getScannedImageList().remove(image);
-            mScannedImageBuffer.remove(image.getId());
+            mScannedImageBuffer.remove(image);
         }
     }
 
@@ -126,7 +126,7 @@ public class DocumentReaderViewModel extends ViewModel {
                             ScannedImage scannedImage = mScannedDocument.getValue().getScannedImageList().get(mViewPagerCurrentIndex);
                             scannedImage.setOriImage(oriBitmapLiveData);
                             scannedImage.setContour(contourLiveData);
-                            mScannedImageBuffer.put(scannedImage.getId(), scannedImage.getAllFilterBitmap());
+                            mScannedImageBuffer.put(scannedImage, scannedImage.getAllFilterBitmap());
                             clearBuffer(navController);
                         } else if (integer == ImageContourSelectorViewModel.DISCARD_IMAGE) {
                             clearBuffer(navController);

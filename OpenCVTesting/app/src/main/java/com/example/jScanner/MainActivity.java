@@ -27,7 +27,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.fragment_scanner, R.id.fragment_navigation_image_contour_selector, R.id.navigation_notifications)
+                R.id.fragment_scanner,
+                R.id.fragment_navigation_image_contour_selector,
+                R.id.fragment_dashboard
+        )
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

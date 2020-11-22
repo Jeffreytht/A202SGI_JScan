@@ -110,7 +110,7 @@ public class ImageContourSelectorView extends View {
                 cropWidth
                 , cropHeight
                 , Bitmap.Config.ARGB_8888);
-        mCroppedBitmap.eraseColor(ContextCompat.getColor(mContext, R.color.colorDarkGrey));
+        mCroppedBitmap.eraseColor(ContextCompat.getColor(mContext, R.color.colorSecondaryBackground));
         Canvas canvas = new Canvas(mCroppedBitmap);
 
         canvas.drawBitmap(tempBp,offsetX, offsetY,  null);

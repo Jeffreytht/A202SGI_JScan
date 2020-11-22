@@ -100,7 +100,7 @@
     <fragment
         android:id="@+id/fragment_dashboard"
         android:name="com.example.jScanner.ui.dashboard.Dashboard"
-        android:label="fragment_dashboard"
+        android:label="@string/label_dashboard"
         tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_dashboard_to_fragment_scanner"

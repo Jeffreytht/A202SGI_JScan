@@ -1,7 +1,10 @@
 package com.example.jScanner.utility;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -20,6 +23,19 @@ public class Storage {
 
         StorageReference ref = mInstance.mStorage.getReference().child(IMAGE_PREFIX_PATH + path);
         ref.putBytes(bmpArr);
+    }
+
+    public static Bitmap getImage(String path){
+        StorageReference ref = mInstance.mStorage.getReference().child(IMAGE_PREFIX_PATH + path);
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.d("DEBUGGIN", "Download URL : " +  uri.toString());
+
+            }
+        });
+
+        return null;
     }
 
     public static void uploadPDF(String path, byte[] pdf){

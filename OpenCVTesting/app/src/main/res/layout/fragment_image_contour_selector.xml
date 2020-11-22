@@ -8,7 +8,7 @@
         android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorDarkGrey"
+        android:background="@color/colorSecondaryBackground"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryBackground"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,8 +39,9 @@
             android:drawableTop="@drawable/ic_rotate_left_white_24dp"
             android:text="Left"
             android:textAllCaps="false"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="10sp"
+            app:backgroundTint="@color/colorPrimaryBackground" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_rotateRight"
@@ -51,8 +52,9 @@
             android:drawableTop="@drawable/ic_rotate_right_white_24dp"
             android:text="Right"
             android:textAllCaps="false"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="10sp"
+            app:backgroundTint="@color/colorPrimaryBackground" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_done"
@@ -64,8 +66,9 @@
             android:drawableTop="@drawable/ic_done_white_24dp"
             android:text="Done"
             android:textAllCaps="false"
-            android:textColor="@color/colorDark"
-            android:textSize="10sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="10sp"
+            app:backgroundTint="@color/colorPrimaryBackground" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

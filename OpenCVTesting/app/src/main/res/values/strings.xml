@@ -36,4 +36,5 @@
     <string name="error_confirm_not_match">Confirm does not match password</string>
     <string name="msg_signUpSuccess">Sign up successfully</string>
     <string name="msg_signInSuccess">Sign in successfully</string>
+    <string name="label_dashboard">Dashboard</string>
 </resources>

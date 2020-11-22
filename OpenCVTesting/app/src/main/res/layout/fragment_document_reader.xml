@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorSecondaryBackground"
     tools:context=".ui.documentScanner.document_reader.DocumentReaderFragment">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorDarkGrey"
+        android:background="@color/colorSecondaryBackground"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -32,7 +32,8 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/border">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_crop"
@@ -40,12 +41,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_baseline_crop_24"
                 android:elevation="0dp"
                 android:text="@string/label_crop"
-                android:textColor="@color/colorDark"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_rotateLeft"
@@ -53,11 +55,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_rotate_left_white_24dp"
                 android:text="@string/label_left"
-                android:textColor="@color/colorDark"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_rotateRight"
@@ -65,11 +68,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_rotate_right_white_24dp"
                 android:text="@string/label_right"
-                android:textColor="@color/colorDark"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_remove"
@@ -77,10 +81,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_baseline_close_24"
                 android:text="@string/label_delete"
                 android:textAllCaps="true"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_colorFilter"
@@ -88,11 +95,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_color_lens_24px"
                 android:text="@string/label_color"
-                android:textColor="@color/colorDark"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_reorder"
@@ -100,11 +108,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/colorPrimaryBackground"
                 android:drawableTop="@drawable/ic_baseline_reorder_24"
                 android:fontFamily="@font/roboto"
                 android:text="@string/label_reorder"
-                android:textColor="@color/colorWhite"
-                android:textSize="10sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorPrimaryBackground" />
 
 
         </LinearLayout>
@@ -115,7 +125,7 @@
         android:id="@+id/recyclerView_colorFilter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/border"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

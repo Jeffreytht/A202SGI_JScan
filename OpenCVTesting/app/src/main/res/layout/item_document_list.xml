@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="225dp"
-    android:background="@color/colorDarkGrey"
-    android:padding="8dp">
+    android:background="@drawable/document_border"
+    android:padding="8dp"
+    app:contentPadding="8dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:background="@color/colorOppoPrimary"
         android:orientation="vertical">
 
         <TextView
@@ -18,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Document Name"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorPrimary"
             android:textSize="20sp" />
 
         <TextView
@@ -27,11 +28,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="18/11/2020"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorPrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorOppoPrimary"
             android:orientation="horizontal">
 
             <ImageView
@@ -39,8 +41,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="5dp"
+                android:layout_margin="3dp"
                 android:layout_weight="1"
+                android:background="@drawable/border"
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -51,7 +54,7 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button3"
+                    android:id="@+id/btn_share"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -61,12 +64,14 @@
                     android:gravity="start|center_vertical"
                     android:text="@string/label_share"
                     android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
                     android:theme="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                     app:backgroundTint="@null"
-                    app:icon="@drawable/ic_baseline_share_24" />
+                    app:icon="@drawable/ic_baseline_share_24"
+                    app:iconTint="@color/colorPrimary" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button4"
+                    android:id="@+id/btn_rename"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -76,12 +81,14 @@
                     android:gravity="start|center_vertical"
                     android:text="@string/label_rename"
                     android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
                     android:theme="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                    app:backgroundTint="@null"
-                    app:icon="@drawable/ic_baseline_edit_24" />
+                    app:backgroundTint="@color/colorPrimary"
+                    app:icon="@drawable/ic_baseline_edit_24"
+                    app:iconTint="@color/colorPrimary" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button5"
+                    android:id="@+id/btn_modify"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -91,11 +98,13 @@
                     android:gravity="start|center_vertical"
                     android:text="@string/label_modify"
                     android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
                     android:theme="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                     app:backgroundTint="@null"
-                    app:icon="@drawable/ic_edit_24" />
+                    app:icon="@drawable/ic_edit_24"
+                    app:iconTint="@color/colorPrimary" />
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>
