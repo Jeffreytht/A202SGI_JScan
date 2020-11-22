@@ -21,6 +21,7 @@ public class ScannedDocument implements Parcelable {
     private String mName;
     private String mId;
     private Uri mCoverUri;
+    private long mDate;
 
     protected ScannedDocument(Parcel in) {
         mName = in.readString();
@@ -33,18 +34,23 @@ public class ScannedDocument implements Parcelable {
     }
 
     public ScannedDocument(String id, String name) {
-        this(id, name, new LinkedList<ScannedImage>());
+        this(id, name, new LinkedList<>());
     }
 
     public ScannedDocument(String id, String name, LinkedList<ScannedImage> scannedImages) {
         this(id, name, scannedImages, null);
     }
 
-    public ScannedDocument(@NonNull String id, @NonNull String name, @NonNull LinkedList<ScannedImage> scannedImages, @Nullable Uri uri) {
+    public ScannedDocument(String id, String name, LinkedList<ScannedImage> scannedImages, Uri uri) {
+        this(id, name, scannedImages, uri, 0);
+    }
+
+    public ScannedDocument(@NonNull String id, @NonNull String name, @NonNull LinkedList<ScannedImage> scannedImages, @Nullable Uri uri, long date){
         this.mId = id;
         this.mName = name;
         this.mScannedImageList = scannedImages;
         this.mCoverUri = uri;
+        this.mDate = date;
     }
 
     public static final Creator<ScannedDocument> CREATOR = new Creator<ScannedDocument>() {
@@ -85,6 +91,14 @@ public class ScannedDocument implements Parcelable {
 
     public void setCoverUri(@Nonnull Uri uri){
         this.mCoverUri = uri;
+    }
+
+    public long getDate(){
+        return mDate;
+    }
+
+    public void setDate(long date){
+        mDate = date;
     }
 
     public void addScannedImage(Bitmap oriImage, Point[] contour) {

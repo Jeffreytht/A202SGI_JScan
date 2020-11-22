@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.jScanner.Callback.SignInResult;
+import com.example.jScanner.Callback.SignInResultListener;
 import com.example.jScanner.MainActivity;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.User;
@@ -105,16 +105,16 @@ public class SignIn extends Fragment implements View.OnClickListener{
             }
         });
 
-        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResult>() {
+        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResultListener>() {
             @Override
-            public void onChanged(SignInResult signInResult) {
+            public void onChanged(SignInResultListener signInResultListener) {
                 ((MainActivity) requireActivity()).dismissProgressDialog();
-                if(signInResult.isSuccess()){
+                if(signInResultListener.isSuccess()){
                     Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
                     NavController navController =  NavHostFragment.findNavController(SignIn.this);
                     navController.navigate(R.id.action_fragment_sign_in_to_dashboard);
                 } else {
-                    Toast.makeText(getContext(), signInResult.getErrorMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), signInResultListener.getErrorMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

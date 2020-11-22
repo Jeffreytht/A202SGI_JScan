@@ -2,12 +2,11 @@ package com.example.jScanner.utility;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.jScanner.Callback.StorageImageListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.jScanner.Callback.CommonResultListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -26,14 +25,9 @@ public class Storage {
         ref.putBytes(bos.toByteArray());
     }
 
-    public static void getImage(@NonNull String path, @NonNull final StorageImageListener storageImageListener){
+    public static void getImage(@NonNull String path, @NonNull final CommonResultListener<Task<Uri>> commonResultListener){
         StorageReference ref = mInstance.mStorage.getReference().child(IMAGE_PREFIX_PATH + path);
-        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                storageImageListener.onStorageImageReceived(uri);
-            }
-        });
+        ref.getDownloadUrl().addOnCompleteListener(commonResultListener::onResultReceived);
     }
 
     public static void uploadPDF(@NonNull String path, @NonNull byte[] pdf){

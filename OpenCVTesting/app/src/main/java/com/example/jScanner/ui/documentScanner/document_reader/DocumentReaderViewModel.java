@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 
+import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.ui.documentScanner.image_contour_selector.ImageContourSelectorViewModel;
@@ -37,7 +38,7 @@ public class DocumentReaderViewModel extends ViewModel {
         mViewPagerCurrentIndex = 0;
     }
 
-    public void initViewModel(Bundle bundle, ScannedImageFinishPreComputeCallback callback) {
+    public void initViewModel(Bundle bundle, ProgressDialogListener callback) {
         DocumentReaderFragmentArgs args = DocumentReaderFragmentArgs.fromBundle(bundle);
         mScannedDocument.setValue(args.getScannedDocument());
         mImagePreComputationAsync = new ImagePreComputation(args.getScannedDocument().getScannedImageList(), callback, mScannedImageBuffer);

@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.jScanner.Callback.DocumentColorFilterCallback;
+import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.ImageProcessing;
@@ -25,12 +25,12 @@ public class DocumentReaderColorFilterAdapter extends  RecyclerView.Adapter<Docu
 
     private Context mContext;
     private final ArrayList<Bitmap> mFilteredBitmap;
-    private final DocumentColorFilterCallback mDocumentColorFilterCallback;
+    private final CommonResultListener<Integer> mDocumentColorFilterCallback;
     private ScannedImage mScannedImage;
 
-    public DocumentReaderColorFilterAdapter(DocumentColorFilterCallback documentColorFIlterCallback) {
+    public DocumentReaderColorFilterAdapter(CommonResultListener<Integer> documentColorFilterCallback) {
         this.mFilteredBitmap = new ArrayList<>();
-        this.mDocumentColorFilterCallback = documentColorFIlterCallback;
+        this.mDocumentColorFilterCallback = documentColorFilterCallback;
     }
 
     public void setData(Context context, ScannedImage scannedImage, Bitmap[] bitmap)
@@ -67,9 +67,9 @@ public class DocumentReaderColorFilterAdapter extends  RecyclerView.Adapter<Docu
 
         private final ImageView mFilteredImage;
         private final TextView mTextViewFilteredName;
-        private final DocumentColorFilterCallback mDocumentColorFilterCallback;
+        private final CommonResultListener<Integer> mDocumentColorFilterCallback;
 
-        public ColorHolder(@NonNull View itemView, DocumentColorFilterCallback documentColorFilterCallback) {
+        public ColorHolder(@NonNull View itemView, CommonResultListener<Integer> documentColorFilterCallback) {
             super(itemView);
             mFilteredImage = itemView.findViewById(R.id.imageView_filtered_image);
             mTextViewFilteredName = itemView.findViewById(R.id.textView_filtered_name);
@@ -91,12 +91,9 @@ public class DocumentReaderColorFilterAdapter extends  RecyclerView.Adapter<Docu
 
             mFilteredImage.setImageBitmap(Bitmap.createScaledBitmap(bitmap,expectedWidth,expectedHeight,false));
             mTextViewFilteredName.setText(filterName);
-            mFilteredImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mFilteredImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.document_reader_selected_image_border));
-                    mDocumentColorFilterCallback.changeColorFilter(1 << position);
-                }
+            mFilteredImage.setOnClickListener(v -> {
+                mFilteredImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.document_reader_selected_image_border));
+                mDocumentColorFilterCallback.onResultReceived(1 << position);
             });
         }
     }

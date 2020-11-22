@@ -1,6 +1,6 @@
 package com.example.jScanner.Callback;
 
-public interface SignInResult{
+public interface SignInResultListener {
     boolean isSuccess();
     String getErrorMessage();
 }

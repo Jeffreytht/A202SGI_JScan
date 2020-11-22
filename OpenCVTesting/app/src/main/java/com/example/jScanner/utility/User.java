@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.jScanner.Callback.SignInResult;
+import com.example.jScanner.Callback.SignInResultListener;
 import com.example.jScanner.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -31,7 +31,7 @@ public class User implements OnCompleteListener<AuthResult>{
     private static User instance;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private GoogleSignInClient mSignInClient;
-    private final MutableLiveData<SignInResult> mSignInResult = new MutableLiveData<>();
+    private final MutableLiveData<SignInResultListener> mSignInResult = new MutableLiveData<>();
 
     public static void init(Context context){
         instance = new User();
@@ -62,7 +62,7 @@ public class User implements OnCompleteListener<AuthResult>{
                     message = "An email has been sent to your email account. Kindly check your email to reset the password.";
                 }
 
-                instance.mSignInResult.setValue(new SignInResult() {
+                instance.mSignInResult.setValue(new SignInResultListener() {
                     @Override
                     public boolean isSuccess() {
                         return isSignInSuccess;
@@ -81,7 +81,7 @@ public class User implements OnCompleteListener<AuthResult>{
         instance.mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(instance);
     }
 
-    public static LiveData<SignInResult> getSignInResult(){
+    public static LiveData<SignInResultListener> getSignInResult(){
         return instance.mSignInResult;
     }
 
@@ -93,7 +93,7 @@ public class User implements OnCompleteListener<AuthResult>{
             AuthCredential credential = GoogleAuthProvider.getCredential(Objects.requireNonNull(account).getIdToken(), null);
             instance.mAuth.signInWithCredential(credential).addOnCompleteListener(instance);
         } catch (final ApiException e) {
-            instance.mSignInResult.setValue(new SignInResult() {
+            instance.mSignInResult.setValue(new SignInResultListener() {
                 @Override
                 public boolean isSuccess() {
                     return false;
@@ -131,7 +131,7 @@ public class User implements OnCompleteListener<AuthResult>{
             errorMessage = "";
         }
 
-        mSignInResult.setValue(new SignInResult() {
+        mSignInResult.setValue(new SignInResultListener() {
             @Override
             public boolean isSuccess() {
                 return isSignInSuccess;

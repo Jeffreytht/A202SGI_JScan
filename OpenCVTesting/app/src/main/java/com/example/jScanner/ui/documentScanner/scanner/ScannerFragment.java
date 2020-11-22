@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.jScanner.Callback.CameraViewCallback;
+import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.R;
 import com.example.jScanner.ui.common.ScannerCameraView;
@@ -26,7 +26,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 
-public class ScannerFragment extends Fragment implements View.OnClickListener, CameraBridgeViewBase.CvCameraViewListener2, CameraViewCallback {
+public class ScannerFragment extends Fragment implements View.OnClickListener, CameraBridgeViewBase.CvCameraViewListener2, CommonResultListener<Bitmap> {
 
     private ScannerViewModel scannerViewModel;
     private ScannerCameraView mJavaCameraView;
@@ -128,7 +128,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
     }
 
     @Override
-    public void receiveBitmap(Bitmap bitmap) {
+    public void onResultReceived(Bitmap result) {
         scannerViewModel.setReceivedBitmap(scannerViewModel.getRGBA());
 
         NavController navController = NavHostFragment.findNavController(this);

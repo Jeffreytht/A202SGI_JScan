@@ -25,7 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
-import com.example.jScanner.Callback.DocumentColorFilterCallback;
+import com.example.jScanner.Callback.CommonResultListener;
+import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.MainActivity;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
@@ -36,7 +37,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
 
-public class DocumentReaderFragment extends Fragment implements View.OnClickListener, DocumentColorFilterCallback, View.OnFocusChangeListener, ScannedImageFinishPreComputeCallback {
+public class DocumentReaderFragment extends Fragment implements View.OnClickListener, CommonResultListener<Integer>, View.OnFocusChangeListener, ProgressDialogListener {
 
     private DocumentPreviewAdapter mDocumentPreviewAdapter;
     private ViewPager2 mViewPagerDocumentPreview;
@@ -145,16 +146,13 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Save as")
                     .setView(linearLayout)
-                    .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((MainActivity) requireActivity()).showProgressDialog("Creating PDF");
+                    .setPositiveButton("Save", (dialog, which) -> {
+                        ((MainActivity) requireActivity()).showProgressDialog("Creating PDF");
 
-                            mViewModel.setDocumentName(mEditTextFileName.getText().toString());
-                            Database.insertNewDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()));
+                        mViewModel.setDocumentName(mEditTextFileName.getText().toString());
+                        Database.insertNewDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()), this);
 
-                            ((MainActivity) requireActivity()).dismissProgressDialog();
-                        }
+                        ((MainActivity) requireActivity()).dismissProgressDialog();
                     }).show();
         }
 
@@ -206,35 +204,10 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
     }
 
     @Override
-    public void changeColorFilter(int type) {
-        mViewModel.getCurrentSelectedImage().setFilter(type);
-        mDocumentReaderColorFilterAdapter.notifyDataSetChanged();
-        mDocumentPreviewAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus)
             mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
     }
-
-    @Override
-    public void refreshUi(final int curr, final int total) {
-        final MainActivity activity = (MainActivity) getActivity();
-        if (activity == null) return;
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (curr == total) {
-                    mDocumentReaderColorFilterAdapter.setData(getContext(), mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
-                    activity.dismissProgressDialog();
-                } else {
-                    activity.updateProgressDialog("Page " + curr + " of " + total);
-                }
-            }
-        });
-    }
-
 
     @Override
     public void onDestroyView() {
@@ -242,4 +215,26 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mViewModel.stopAsync();
     }
 
+    @Override
+    public void onResultReceived(Integer type) {
+        mViewModel.getCurrentSelectedImage().setFilter(type);
+        mDocumentReaderColorFilterAdapter.notifyDataSetChanged();
+        mDocumentPreviewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onShowProgressDialog(String message) {
+        requireActivity().runOnUiThread(()-> ((MainActivity)requireActivity()).showProgressDialog(message));
+
+    }
+
+    @Override
+    public void onUpdateProgressDialog(String message) {
+        requireActivity().runOnUiThread(()-> ((MainActivity)requireActivity()).updateProgressDialog(message));
+    }
+
+    @Override
+    public void onDismissProgressDialog() {
+        requireActivity().runOnUiThread(()-> ((MainActivity)requireActivity()).dismissProgressDialog());
+    }
 }

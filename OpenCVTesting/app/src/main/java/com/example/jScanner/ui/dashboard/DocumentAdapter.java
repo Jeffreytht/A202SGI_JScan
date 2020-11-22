@@ -11,6 +11,7 @@ import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentViewHolder> {
     private final Context mContext;

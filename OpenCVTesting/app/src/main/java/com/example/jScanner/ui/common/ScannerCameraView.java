@@ -1,19 +1,20 @@
 package com.example.jScanner.ui.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.example.jScanner.Callback.CameraViewCallback;
+import com.example.jScanner.Callback.CommonResultListener;
 
 import org.opencv.android.JavaCameraView;
 
 
 public class ScannerCameraView extends JavaCameraView implements android.hardware.Camera.PictureCallback {
     private static final String TAG = "JavaCameraView";
-    private CameraViewCallback mCallBack = null;
+    private CommonResultListener<Bitmap> mCallBack = null;
 
     public ScannerCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -27,7 +28,7 @@ public class ScannerCameraView extends JavaCameraView implements android.hardwar
     }
 
     public void takePicture(){takePicture(null);}
-    public void takePicture(CameraViewCallback cameraViewCallback)
+    public void takePicture(CommonResultListener<Bitmap> cameraViewCallback)
     {
         Log.i(TAG, "Taking picture");
         if(cameraViewCallback != null)
@@ -42,6 +43,6 @@ public class ScannerCameraView extends JavaCameraView implements android.hardwar
         mCamera.startPreview();
         mCamera.setPreviewCallback(this);
         if(mCallBack != null)
-            mCallBack.receiveBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+            mCallBack.onResultReceived(BitmapFactory.decodeByteArray(data,0,data.length));
     }
 }

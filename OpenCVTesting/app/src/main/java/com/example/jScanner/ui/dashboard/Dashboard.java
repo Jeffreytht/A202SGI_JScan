@@ -9,36 +9,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.jScanner.Model.ScannedDocument;
+import com.example.jScanner.Callback.ProgressDialogListener;
+import com.example.jScanner.MainActivity;
 import com.example.jScanner.R;
-import com.example.jScanner.utility.Database;
-import com.example.jScanner.utility.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-public class Dashboard extends Fragment implements View.OnClickListener{
+public class Dashboard extends Fragment implements View.OnClickListener, ProgressDialogListener {
 
     private DashboardViewModel mViewModel;
     private RecyclerView mRvDocumentList;
     private FloatingActionButton mFabScanner;
-    private ArrayList<ScannedDocument> testData = new ArrayList<ScannedDocument>(){{
-        add(new ScannedDocument("", "260CDE Assignment"));
-        add(new ScannedDocument("", "260CDE Assignment"));
-        add(new ScannedDocument("", "260CDE Assignment"));
-        add(new ScannedDocument("", "260CDE Assignment"));
-        add(new ScannedDocument("", "260CDE Assignment"));
-    }};
-
-    public static Dashboard newInstance() {
-        return new Dashboard();
-    }
+    private DocumentAdapter mAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -55,11 +42,16 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
         mFabScanner.setOnClickListener(this);
 
-        DocumentAdapter adapter = new DocumentAdapter(testData, requireContext());
+        mAdapter = new DocumentAdapter(mViewModel.getScannedDocument().getValue(), requireContext());
         mRvDocumentList.addItemDecoration(new DashboardItemDecoration(16, 1,getResources().getDisplayMetrics()));
-        mRvDocumentList.setAdapter(adapter);
+        mRvDocumentList.setAdapter(mAdapter);
         mRvDocumentList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false));
-        Database.getDocument(User.getUser(), null);
+
+        mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), documents -> {
+            mAdapter.notifyDataSetChanged();
+        });
+
+        mViewModel.initDocument(this);
     }
 
     @Override
@@ -67,5 +59,21 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         if(v.getId() == mFabScanner.getId()){
             NavHostFragment.findNavController(this).navigate(R.id.action_dashboard_to_fragment_scanner);
         }
+    }
+
+
+    @Override
+    public void onShowProgressDialog(String message) {
+        ((MainActivity) requireActivity()).showProgressDialog(message);
+    }
+
+    @Override
+    public void onUpdateProgressDialog(String message) {
+        ((MainActivity) requireActivity()).updateProgressDialog(message);
+    }
+
+    @Override
+    public void onDismissProgressDialog() {
+        ((MainActivity) requireActivity()).dismissProgressDialog();
     }
 }
