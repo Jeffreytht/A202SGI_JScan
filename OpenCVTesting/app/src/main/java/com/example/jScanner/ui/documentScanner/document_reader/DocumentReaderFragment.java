@@ -134,7 +134,6 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             linearLayout.setPadding((int) (16 * density), 0, (int) (16 * density), 0);
 
             mEditTextFileName.setHint("File name");
-
             mEditTextFileName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
             mEditTextFileName.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -147,12 +146,8 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
                     .setTitle("Save as")
                     .setView(linearLayout)
                     .setPositiveButton("Save", (dialog, which) -> {
-                        ((MainActivity) requireActivity()).showProgressDialog("Creating PDF");
-
                         mViewModel.setDocumentName(mEditTextFileName.getText().toString());
                         Database.insertNewDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()), this);
-
-                        ((MainActivity) requireActivity()).dismissProgressDialog();
                     }).show();
         }
 

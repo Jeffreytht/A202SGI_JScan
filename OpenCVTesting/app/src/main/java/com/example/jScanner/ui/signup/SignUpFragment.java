@@ -16,7 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.jScanner.Callback.SignInResultListener;
+import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.MainActivity;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.User;
@@ -133,15 +133,15 @@ public class SignUpFragment extends Fragment {
             }
         });
 
-        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResultListener>() {
+        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<StatusResultListener>() {
             @Override
-            public void onChanged(SignInResultListener signInResultListener) {
+            public void onChanged(StatusResultListener statusResultListener) {
                 ((MainActivity) getActivity()).dismissProgressDialog();
-                if(signInResultListener.isSuccess()){
+                if(statusResultListener.isSuccess()){
                     Toast.makeText(getContext(), R.string.msg_signUpSuccess, Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(SignUpFragment.this).popBackStack();
                 } else {
-                    Toast.makeText(getContext(), signInResultListener.getErrorMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), statusResultListener.getErrorMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

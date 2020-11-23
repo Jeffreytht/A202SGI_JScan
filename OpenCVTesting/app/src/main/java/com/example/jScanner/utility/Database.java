@@ -6,13 +6,15 @@ import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,67 +47,73 @@ public class Database {
         instance.mDb.collection(COL_USER).document(uuid).set(user, SetOptions.merge());
     }
 
-    private static void insertImages(final FirebaseUser user, final String id, final ScannedDocument scannedDocument) {
+    private static Task<Void> insertImages(final FirebaseUser user, final ScannedDocument scannedDocument) {
         final CollectionReference ref = instance.mDb.collection(COL_USER).document(user.getUid())
                 .collection(COL_DOCUMENT).document(scannedDocument.getId())
                 .collection(COL_IMAGES);
 
+        final WriteBatch writeBatch = instance.mDb.batch();
         final List<ScannedImage> scannedImageLinkedList = scannedDocument.getScannedImageList();
 
-        ref.get().continueWith(task -> {
-            List<DocumentSnapshot> snapshots = Objects.requireNonNull(task.getResult()).getDocuments();
-            for (DocumentSnapshot s : snapshots)
-                s.getReference().delete();
-            return null;
-        }).continueWith(task -> {
-            Map<String, Object> imageData = new HashMap<>();
+        Map<String, Object> imageData = new HashMap<>();
 
-            int seq = 1;
-            // Upload cover for document list in dashboard
-            Storage.uploadImage(id + "/cover.bmp", scannedImageLinkedList.get(0).getFinalImage());
+        int seq = 1;
+        // Upload cover for document list in dashboard
+        Storage.uploadImage(scannedDocument.getId() + "/cover.bmp", scannedImageLinkedList.get(0).getFinalImage());
 
-            for (ScannedImage si : scannedImageLinkedList) {
-                String path = id + "/" + seq + ".bmp";
-                Storage.uploadImage(path, si.getOriImage());
-                imageData.put(FLD_SEQ, seq);
-                imageData.put(FLD_BITMAP, path);
-                imageData.put(FLD_CONTOUR, Arrays.asList(si.getContour()));
-                imageData.put(FLD_FILTER, si.getFilter());
-                ref.add(imageData);
-                seq++;
-            }
-            return null;
-        });
+        for (ScannedImage si : scannedImageLinkedList) {
+            String path = scannedDocument.getId() + "/" + seq + ".bmp";
+            imageData.put(FLD_SEQ, seq);
+            imageData.put(FLD_BITMAP, path);
+            imageData.put(FLD_CONTOUR, Arrays.asList(si.getContour()));
+            imageData.put(FLD_FILTER, si.getFilter());
+            writeBatch.set(ref.document(), imageData);
+            seq++;
+        }
+
+        return writeBatch.commit();
     }
 
     public static void insertNewDocument(final FirebaseUser firebaseUser, final ScannedDocument scannedDocument, final ProgressDialogListener progressDialogListener) {
         progressDialogListener.onShowProgressDialog("Creating document");
         String uuid = firebaseUser.getUid();
 
-        // Init file name, if file name is empty, default is current date
-        final StringBuilder fileName = new StringBuilder(scannedDocument.getName());
-        if (fileName.length() == 0)
-            fileName.append(DateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
-
         final CollectionReference collectionReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT);
 
-        // Check if this document is new
-        if (scannedDocument.getId() == null || scannedDocument.getId().isEmpty()) {
-            Map<String, Object> documentData = new HashMap<>();
-            documentData.put(FLD_FILE_NAME, fileName.toString());
-            documentData.put(FLD_DATE_ADDED, Calendar.getInstance().getTimeInMillis());
+        Map<String, Object> documentData = new HashMap<>();
+        documentData.put(FLD_FILE_NAME, scannedDocument.getName());
+        documentData.put(FLD_DATE_ADDED, Calendar.getInstance().getTimeInMillis());
 
-            collectionReference.add(documentData)
-                    .addOnSuccessListener(ref -> {
-                        scannedDocument.setId(ref.getId());
-                        insertImages(firebaseUser, scannedDocument.getId(), scannedDocument);
-                        Storage.uploadPDF(scannedDocument.getId() + "/" + fileName + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList()));
-                    }).addOnFailureListener(e -> {
-                        progressDialogListener.onDismissProgressDialog();
-            });
+        // Check if this document is new
+        Continuation<Task<Void>, Object> uploadImages = insertImagesTask -> {
+            if (insertImagesTask.isSuccessful()) {
+                Storage.uploadImages(scannedDocument);
+                Storage.uploadPDF(scannedDocument.getId() + "/" + scannedDocument.getName() + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList()));
+            }
+            progressDialogListener.onDismissProgressDialog();
+            return null;
+        };
+
+        if (scannedDocument.getId() == null || scannedDocument.getId().isEmpty()) {
+            collectionReference.add(documentData).continueWith(taskAddDocument -> {
+                if (!taskAddDocument.isSuccessful()) {
+                    progressDialogListener.onDismissProgressDialog();
+                    return null;
+                } else {
+                    scannedDocument.setId(Objects.requireNonNull(taskAddDocument.getResult()).getId());
+                    return insertImages(firebaseUser, scannedDocument);
+                }
+            }).continueWith(uploadImages);
+
         } else {
-            insertImages(firebaseUser, scannedDocument.getId(), scannedDocument);
-            Storage.uploadPDF(scannedDocument.getId() + "/" + fileName + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList()));
+            collectionReference.document(scannedDocument.getId()).set(documentData).continueWith(taskSetDocument -> {
+                if (!taskSetDocument.isSuccessful()) {
+                    progressDialogListener.onDismissProgressDialog();
+                    return null;
+                } else {
+                    return insertImages(firebaseUser, scannedDocument);
+                }
+            }).continueWith(uploadImages);
         }
     }
 
@@ -117,13 +125,13 @@ public class Database {
             final ArrayList<ScannedDocument> scannedDocuments = new ArrayList<>();
             final List<DocumentSnapshot> documentSnapshotList = Objects.requireNonNull(task.getResult()).getDocuments();
 
-            if(documentSnapshotList.isEmpty())
+            if (documentSnapshotList.isEmpty())
                 dbGetDocumentCallback.onResultReceived(scannedDocuments);
 
             for (final DocumentSnapshot s : documentSnapshotList) {
-                Storage.getImage(s.getId() + "/cover.bmp",  uriTask -> {
+                Storage.getImage(s.getId() + "/cover.bmp", uriTask -> {
                     if (uriTask.isSuccessful()) {
-                        ScannedDocument scannedDocument = new ScannedDocument(s.getId(), Objects.requireNonNull(s.get(FLD_FILE_NAME)).toString(), new LinkedList<>(), uriTask.getResult(), (Long)Objects.requireNonNull(s.get(FLD_DATE_ADDED)));
+                        ScannedDocument scannedDocument = new ScannedDocument(s.getId(), Objects.requireNonNull(s.get(FLD_FILE_NAME)).toString(), new LinkedList<>(), uriTask.getResult(), (Long) Objects.requireNonNull(s.get(FLD_DATE_ADDED)));
                         scannedDocuments.add(scannedDocument);
 
                         // Check if all documents received

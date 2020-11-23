@@ -2,6 +2,7 @@ package com.example.jScanner;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,46 +14,46 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.jScanner.utility.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
 
     ProgressDialog mProgressDialog;
+    BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User.init(this);
         setContentView(R.layout.activity_main);
-       // BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.fragment_scanner,
-                R.id.fragment_navigation_image_contour_selector,
+                R.id.fragment_room,
                 R.id.fragment_dashboard
-        )
-                .build();
+        ).build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-       // NavigationUI.setupWithNavController(navView, navController);
+        NavigationUI.setupWithNavController(navView, navController);
         navController.addOnDestinationChangedListener(this);
     }
 
     @Override
     public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
         final int destId = destination.getId();
-        if(destId ==  R.id.fragment_splashScreen)
+        if(destId == R.id.fragment_dashboard){
+            showBottomNav();
+        } else {
+            hideBottomNav();
+        }
+
+        if(destId == R.id.fragment_sign_in || destId == R.id.fragment_splashScreen) {
             hideActionBar();
-        else if(destId == R.id.fragment_documentReader)
+        } else {
             showActionBar();
-        else if(destId == R.id.fragment_navigation_image_contour_selector)
-            showActionBar();
-        else if(destId == R.id.fragment_scanner)
-            showActionBar();
-        else if(destId == R.id.fragment_sign_in)
-            hideActionBar();
-        else if(destId == R.id.fragment_dashboard)
-            showActionBar();
+        }
     }
 
     private void hideActionBar(){
@@ -63,6 +64,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     private void showActionBar(){
         if(getSupportActionBar() != null)
             getSupportActionBar().show();
+    }
+
+    private void showBottomNav(){
+        navView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideBottomNav(){
+        navView.setVisibility(View.GONE);
     }
 
     @Override

@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.jScanner.Callback.SignInResultListener;
+import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.User;
 import com.google.android.material.textfield.TextInputEditText;
@@ -75,10 +75,10 @@ public class ForgotPassword extends Fragment {
             }
         });
 
-        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<SignInResultListener>() {
+        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<StatusResultListener>() {
             @Override
-            public void onChanged(SignInResultListener signInResultListener) {
-                Toast.makeText(getContext(), signInResultListener.getErrorMessage(),Toast.LENGTH_SHORT).show();
+            public void onChanged(StatusResultListener statusResultListener) {
+                Toast.makeText(getContext(), statusResultListener.getErrorMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

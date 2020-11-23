@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 
 import org.opencv.core.Point;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,7 +80,7 @@ public class ScannedDocument implements Parcelable {
     }
 
     public String getName() {
-        return mName;
+        return (mName == null || mName.isEmpty()) ?  DateFormat.getDateInstance().format(Calendar.getInstance().getTime()) : mName;
     }
 
     public void setName(String name) {

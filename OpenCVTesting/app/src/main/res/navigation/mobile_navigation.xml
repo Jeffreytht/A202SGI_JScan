@@ -6,22 +6,22 @@
     app:startDestination="@id/fragment_splashScreen">
 
     <fragment
-        android:id="@+id/fragment_scanner"
+        android:id="@+id/fragment_document"
         android:name="com.example.jScanner.ui.documentScanner.scanner.ScannerFragment"
         android:label="@string/title_scanner"
         tools:layout="@layout/fragment_scanner" >
         <action
             android:id="@+id/action_scanner_to_navigation_image_selector"
-            app:destination="@id/fragment_navigation_image_contour_selector"
-            app:popUpTo="@id/fragment_scanner" />
+            app:destination="@id/fragment_room"
+            app:popUpTo="@id/fragment_document" />
         <action
             android:id="@+id/action_navigation_scanner_to_documentReaderFragment"
             app:destination="@id/fragment_documentReader"
-            app:popUpTo="@id/fragment_scanner" />
+            app:popUpTo="@id/fragment_document" />
     </fragment>
 
     <fragment
-        android:id="@+id/fragment_navigation_image_contour_selector"
+        android:id="@+id/fragment_room"
         android:name="com.example.jScanner.ui.documentScanner.image_contour_selector.ImageContourSelectorFragment"
         android:label="@string/title_image_editor"
         tools:layout="@layout/fragment_image_contour_selector" >
@@ -43,7 +43,7 @@
             app:argType="com.example.jScanner.Model.ScannedDocument" />
         <action
             android:id="@+id/action_documentReaderFragment_to_navigation_image_contour_selector"
-            app:destination="@id/fragment_navigation_image_contour_selector"
+            app:destination="@id/fragment_room"
             app:popUpTo="@id/fragment_documentReader" />
         <action
             android:id="@+id/action_fragment_documentReader_to_documentArrangeFragment"
@@ -104,7 +104,7 @@
         tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_dashboard_to_fragment_scanner"
-            app:destination="@id/fragment_scanner" />
+            app:destination="@id/fragment_document" />
     </fragment>
 
 </navigation>

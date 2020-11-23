@@ -94,7 +94,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
                     android:layout_weight="1"
                     android:background="@color/colorOppoPrimary"
                     android:backgroundTint="@color/colorOppoPrimary"
@@ -106,6 +105,25 @@
                     android:theme="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                     app:backgroundTint="@color/colorOppoPrimary"
                     app:icon="@drawable/ic_edit_24"
+                    app:iconTint="@color/colorPrimary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_delete"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorOppoPrimary"
+                    android:backgroundTint="@color/colorOppoPrimary"
+                    android:forceDarkAllowed="false"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/label_delete"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    android:theme="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    app:backgroundTint="@color/colorOppoPrimary"
+                    app:icon="@drawable/ic_baseline_close_24"
                     app:iconTint="@color/colorPrimary" />
             </LinearLayout>
 
