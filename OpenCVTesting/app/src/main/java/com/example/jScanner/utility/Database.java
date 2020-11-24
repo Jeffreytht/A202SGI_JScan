@@ -1,19 +1,27 @@
 package com.example.jScanner.utility;
 
+import android.graphics.BitmapFactory;
+
 import androidx.annotation.NonNull;
 
+import com.example.jScanner.Callback.BiResultListener;
 import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Callback.ProgressDialogListener;
+import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
+
+import org.opencv.core.Point;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +55,7 @@ public class Database {
         instance.mDb.collection(COL_USER).document(uuid).set(user, SetOptions.merge());
     }
 
-    private static Task<Void> insertImages(final FirebaseUser user, final ScannedDocument scannedDocument) {
+    private static Task<Void> insertImages(@NonNull final FirebaseUser user, @NonNull final ScannedDocument scannedDocument) {
         final CollectionReference ref = instance.mDb.collection(COL_USER).document(user.getUid())
                 .collection(COL_DOCUMENT).document(scannedDocument.getId())
                 .collection(COL_IMAGES);
@@ -74,8 +82,45 @@ public class Database {
         return writeBatch.commit();
     }
 
-    public static void insertNewDocument(final FirebaseUser firebaseUser, final ScannedDocument scannedDocument, final ProgressDialogListener progressDialogListener) {
-        progressDialogListener.onShowProgressDialog("Creating document");
+    private static void removeImages(@NonNull final FirebaseUser user, @NonNull final ScannedDocument scannedDocument){
+
+        final WriteBatch writeBatch = instance.mDb.batch();
+
+        instance.mDb.collection(COL_USER).document(user.getUid())
+                .collection(COL_DOCUMENT).document(scannedDocument.getId())
+                .collection(COL_IMAGES).get().continueWith( task ->{
+                    QuerySnapshot snapshots = task.getResult();
+                    for(DocumentSnapshot s: snapshots)
+                        writeBatch.delete(s.getReference());
+                    writeBatch.commit();
+                    return null;
+        });
+    }
+
+    public static void updateDocument(@NonNull FirebaseUser firebaseUser, @NonNull ScannedDocument scannedDocument){
+        String uuid = firebaseUser.getUid();
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put(FLD_FILE_NAME, scannedDocument.getName());
+
+        instance.mDb.collection(COL_USER)
+                .document(uuid)
+                .collection(COL_DOCUMENT)
+                .document(scannedDocument.getId())
+                .set(data, SetOptions.merge());
+    }
+
+    public static void removeDocument(@NonNull FirebaseUser firebaseUser, @NonNull ScannedDocument scannedDocument){
+        String uuid = firebaseUser.getUid();
+        instance.mDb.collection(COL_USER)
+                .document(uuid)
+                .collection(COL_DOCUMENT)
+                .document(scannedDocument.getId())
+                .delete();
+    }
+
+    public static void saveDocument(final FirebaseUser firebaseUser, final ScannedDocument scannedDocument, final ProgressDialogListener progressDialogListener) {
+        progressDialogListener.onShowProgressDialog("Saving document");
         String uuid = firebaseUser.getUid();
 
         final CollectionReference collectionReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT);
@@ -101,6 +146,7 @@ public class Database {
                     return null;
                 } else {
                     scannedDocument.setId(Objects.requireNonNull(taskAddDocument.getResult()).getId());
+                    removeImages(firebaseUser, scannedDocument);
                     return insertImages(firebaseUser, scannedDocument);
                 }
             }).continueWith(uploadImages);
@@ -111,13 +157,133 @@ public class Database {
                     progressDialogListener.onDismissProgressDialog();
                     return null;
                 } else {
+                    removeImages(firebaseUser, scannedDocument);
                     return insertImages(firebaseUser, scannedDocument);
                 }
             }).continueWith(uploadImages);
         }
     }
 
-    public static void getDocument(@NonNull FirebaseUser firebaseUser, @NonNull final CommonResultListener<ArrayList<ScannedDocument>> dbGetDocumentCallback) {
+    @SuppressWarnings("unchecked")
+    private static Point[] listOfMapToPoints(@NonNull List<?> maps){
+        final int TOTAL_POINTS = maps.size();
+        Point[] points = new Point[TOTAL_POINTS];
+        for(int i = 0 ; i < TOTAL_POINTS; i++){
+            HashMap<String, Double> data = (HashMap<String, Double>) maps.get(i);
+            points[i] = new Point(data.get("x"), data.get("y"));
+        }
+        return points;
+    }
+
+    public static void getFullDocument(@NonNull FirebaseUser firebaseUser, @NonNull ScannedDocument scannedDocument, @NonNull BiResultListener<StatusResultListener, ScannedDocument> resultListener, @NonNull ProgressDialogListener progressDialogListener){
+        progressDialogListener.onShowProgressDialog("Retrieving documents");
+        String uuid = firebaseUser.getUid();
+
+        final CommonResultListener<StatusResultListener> commonResultListener = new CommonResultListener<StatusResultListener>() {
+            private final ArrayList<StatusResultListener> resultList = new ArrayList<>();
+
+            @Override
+            public void onResultReceived(StatusResultListener result) {
+                resultList.add(result);
+
+                if(resultList.size() >= 2){
+                    StatusResultListener finalResult = null;
+
+                    for(StatusResultListener s: resultList){
+                        finalResult = s;
+                        if(!s.isSuccess())
+                            break;
+                    }
+
+                    progressDialogListener.onDismissProgressDialog();
+                    resultListener.onResultReceived(finalResult, scannedDocument);
+                }
+            }
+        };
+
+        // Retrieve email and date added
+        final DocumentReference documentReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT).document(scannedDocument.getId());
+        documentReference.get().continueWith(result ->{
+            if(result.isSuccessful()){
+                final DocumentSnapshot snapshot = result.getResult();
+                scannedDocument.setName(snapshot.getString(FLD_FILE_NAME));
+                scannedDocument.setDate(snapshot.getLong(FLD_DATE_ADDED));
+            }
+
+            commonResultListener.onResultReceived(new StatusResultListener() {
+                    @Override
+                    public boolean isSuccess() { return result.isSuccessful(); }
+
+                    @Override
+                    public String getErrorMessage() { return result.isSuccessful() ? "" : result.getException().getMessage(); }
+                }
+            );
+
+            return result.isSuccessful();
+        });
+
+        // Retrieve image, contour
+        documentReference.collection(COL_IMAGES).get().continueWith(imagesResult ->{
+            if(imagesResult.isSuccessful()){
+                final QuerySnapshot images              = imagesResult.getResult();
+                ScannedImage[] scannedImages            = new ScannedImage[images.getDocuments().size()];
+                ArrayList<Boolean> completeFlags        = new ArrayList<>();
+
+                for (DocumentSnapshot image : images) {
+                    List<?> contour = (List<?>) image.get(FLD_CONTOUR);
+                    Storage.downloadImage(image.getString(FLD_BITMAP), imageByteArr ->{
+
+                        // When receive image, update the flags
+                        completeFlags.add(imageByteArr != null);
+
+                        // If image retrieve successfully, add to array list
+                        if(imageByteArr != null) {
+                            ScannedImage scannedImage = new ScannedImage(BitmapFactory.decodeByteArray(imageByteArr, 0, imageByteArr.length), listOfMapToPoints(contour));
+                            scannedImage.setFilter(image.getLong(FLD_FILTER).intValue());
+                            scannedImages[image.getLong(FLD_SEQ).intValue() - 1] = scannedImage;
+                        }
+
+                        // When all files downloaded, trigger parents
+                        if(completeFlags.size() == images.size()){
+                            scannedDocument.clearScannedImage();
+                            for (ScannedImage scannedImage : scannedImages) {
+                                scannedDocument.addScannedImage(scannedImage);
+                            }
+
+                            commonResultListener.onResultReceived(new StatusResultListener() {
+                                @Override
+                                public boolean isSuccess() {
+                                    return !completeFlags.contains(false);
+                                }
+
+                                @Override
+                                public String getErrorMessage() {
+                                    return (completeFlags.contains(false)) ? "Fail to retrieve image" : "";
+                                }
+                            });
+                        }
+                    });
+                }
+            } else {
+                commonResultListener.onResultReceived(new StatusResultListener() {
+                    @Override
+                    public boolean isSuccess() {
+                        return false;
+                    }
+
+                    @Override
+                    public String getErrorMessage() {
+                        return "Fail to retrieve image";
+                    }
+                });
+            }
+
+            return null;
+        });
+    }
+
+
+    public static void getBriefDocument(@NonNull FirebaseUser firebaseUser, @NonNull final CommonResultListener<ArrayList<ScannedDocument>> dbGetDocumentCallback) {
         String uuid = firebaseUser.getUid();
 
         final CollectionReference collectionReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT);

@@ -33,7 +33,7 @@ public class ImagePreComputation extends AsyncTask<ScannedDocument, Integer, Voi
             if(imageIdx == totalImage - 1)
                 mCallback.onDismissProgressDialog();
             else
-                mCallback.onUpdateProgressDialog("Page " + imageIdx + 1 + " of " + totalImage);
+                mCallback.onUpdateProgressDialog("Page " + (imageIdx + 1) + " of " + totalImage);
         }
         return null;
     }

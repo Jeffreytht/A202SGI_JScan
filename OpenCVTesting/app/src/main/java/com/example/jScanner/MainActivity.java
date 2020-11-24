@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             hideBottomNav();
         }
 
-        if(destId == R.id.fragment_sign_in || destId == R.id.fragment_splashScreen) {
+        if(destId == R.id.fragment_sign_in || destId == R.id.fragment_splashScreen || destId == R.id.forgotPassword || destId == R.id.fragment_sign_up) {
             hideActionBar();
         } else {
             showActionBar();

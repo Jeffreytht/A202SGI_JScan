@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.Model.ScannedDocument;
+import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.utility.Database;
 import com.example.jScanner.utility.User;
 
@@ -23,7 +24,7 @@ public class DashboardViewModel extends ViewModel implements CommonResultListene
     public void initDocument(ProgressDialogListener listener){
         mDocumentReceivedListener = listener;
         listener.onShowProgressDialog("Loading documents");
-        Database.getDocument(User.getUser(), this);
+        Database.getBriefDocument(User.getUser(), this);
     }
 
     @Override
@@ -33,5 +34,14 @@ public class DashboardViewModel extends ViewModel implements CommonResultListene
         scannedDocuments.addAll(scannedDocumentList);
         mScannedDocument.setValue(scannedDocuments);
         mDocumentReceivedListener.onDismissProgressDialog();
+    }
+
+    public void removeDocument(ScannedDocument scannedDocument){
+        mScannedDocument.getValue().remove(scannedDocument);
+    }
+
+    public int indexOfScannedDocument(ScannedDocument scannedDocument){
+        ArrayList<ScannedDocument> scannedDocuments = mScannedDocument.getValue();
+        return scannedDocuments.indexOf(scannedDocument);
     }
 }

@@ -1,7 +1,6 @@
 package com.example.jScanner.ui.documentScanner.document_reader;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +26,6 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.MainActivity;
-import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.Database;
@@ -78,12 +75,7 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
         mDocumentPreviewAdapter = new DocumentPreviewAdapter(mViewPagerDocumentPreview);
         mViewPagerDocumentPreview.setAdapter(mDocumentPreviewAdapter);
 
-        mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), new Observer<ScannedDocument>() {
-            @Override
-            public void onChanged(ScannedDocument scannedDocument) {
-                mDocumentPreviewAdapter.setData(getContext(), scannedDocument.getScannedImageList());
-            }
-        });
+        mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), scannedDocument -> mDocumentPreviewAdapter.setData(getContext(), scannedDocument.getScannedImageList()));
 
         mRecyclerViewColorFilter.setOnFocusChangeListener(this);
         mViewPagerDocumentPreview.registerOnPageChangeCallback(new OnPageChangeCallback() {
@@ -136,21 +128,41 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             mEditTextFileName.setHint("File name");
             mEditTextFileName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
             mEditTextFileName.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            if (mViewModel.isDocumentNameSet())
-                mEditTextFileName.setText(mViewModel.getDocumentName());
+            mEditTextFileName.setText(mViewModel.getDocumentName());
 
             linearLayout.addView(mEditTextFileName);
 
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Save as")
-                    .setView(linearLayout)
-                    .setPositiveButton("Save", (dialog, which) -> {
-                        mViewModel.setDocumentName(mEditTextFileName.getText().toString());
-                        Database.insertNewDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()), this);
-                    }).show();
-        }
+            ProgressDialogListener progressDialogListener = new ProgressDialogListener() {
+                @Override
+                public void onShowProgressDialog(String message) {
+                    requireActivity().runOnUiThread(() -> ((MainActivity) requireActivity()).showProgressDialog(message));
+                }
 
+                @Override
+                public void onUpdateProgressDialog(String message) {
+                    requireActivity().runOnUiThread(() -> ((MainActivity) requireActivity()).updateProgressDialog(message));
+                }
+
+                @Override
+                public void onDismissProgressDialog() {
+                    requireActivity().runOnUiThread(() -> ((MainActivity) requireActivity()).dismissProgressDialog());
+                    NavHostFragment.findNavController(DocumentReaderFragment.this).popBackStack(R.id.fragment_dashboard, false);
+                }
+            };
+
+            if (mViewModel.isNewDocument())
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Save as")
+                        .setView(linearLayout)
+                        .setPositiveButton("Save", (dialog, which) -> {
+                            mViewModel.setDocumentName(mEditTextFileName.getText().toString());
+                            Database.saveDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()), progressDialogListener);
+                        })
+                        .show();
+            else {
+                Database.saveDocument(User.getUser(), Objects.requireNonNull(mViewModel.getScannedDocument().getValue()), progressDialogListener);
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -172,8 +184,10 @@ public class DocumentReaderFragment extends Fragment implements View.OnClickList
             mDocumentPreviewAdapter.notifyDataSetChanged();
             mDocumentReaderColorFilterAdapter.setData(getContext(), mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
         } else if (id == mButtonColorFilter.getId()) {
-            if (mRecyclerViewColorFilter.getVisibility() == View.INVISIBLE)
+            if (mRecyclerViewColorFilter.getVisibility() == View.INVISIBLE) {
+                mDocumentReaderColorFilterAdapter.setData(getContext(), mViewModel.getCurrentSelectedImage(), mViewModel.getCurrentSelectedFilteredImage());
                 mRecyclerViewColorFilter.setVisibility(View.VISIBLE);
+            }
             else
                 mRecyclerViewColorFilter.setVisibility(View.INVISIBLE);
         } else if (id == mButtonReorder.getId()) {

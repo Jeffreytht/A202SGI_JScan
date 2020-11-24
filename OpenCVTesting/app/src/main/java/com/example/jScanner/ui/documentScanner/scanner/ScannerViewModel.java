@@ -2,18 +2,17 @@ package com.example.jScanner.ui.documentScanner.scanner;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 
 import com.example.jScanner.Model.ScannedDocument;
-import com.example.jScanner.Model.ScannedImage;
 import com.example.jScanner.ui.documentScanner.image_contour_selector.ImageContourSelectorViewModel;
 import com.example.jScanner.utility.ImageProcessing;
 
@@ -21,24 +20,29 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
-import java.util.List;
-
 public class ScannerViewModel extends ViewModel {
 
-    private final ScannedDocument mScannedDocument;
+    private ScannedDocument mScannedDocument = null;
     private final MutableLiveData<Bitmap> mButtonBitmap = new MutableLiveData<>();
     private Mat mRGBA;
 
     // Buffer
-    private Bitmap mReceivedBitmap;
-
-    public ScannerViewModel() {
-        mScannedDocument = new ScannedDocument();
-        mReceivedBitmap = null;
-    }
+    private Bitmap mReceivedBitmap = null;
 
     public LiveData<Bitmap> getButtonBitmap() {
         return mButtonBitmap;
+    }
+
+    public void initViewModel(Bundle bundle){
+        ScannerFragmentArgs args = ScannerFragmentArgs.fromBundle(bundle);
+        if(mScannedDocument != null) return;
+
+        if(args.getScannedDocument() != null) {
+            mScannedDocument = args.getScannedDocument();
+            mButtonBitmap.setValue(mScannedDocument.getScannedImageList().get(mScannedDocument.getScannedImageList().size() - 1).getFinalImage());
+        }
+        else
+            mScannedDocument = new ScannedDocument();
     }
 
     ScannedDocument getScannedDocument(){return mScannedDocument;}
@@ -77,18 +81,15 @@ public class ScannerViewModel extends ViewModel {
             final Point[] contourLiveData      = savedStateHandle.get(ImageContourSelectorViewModel.TAG_CONTOUR);
             final MutableLiveData<Integer> flagLiveData  = savedStateHandle.getLiveData(ImageContourSelectorViewModel.TAG_FLAG_ADD_TO_DOCUMENT);
 
-            flagLiveData.observe(owner, new Observer<Integer>() {
-                @Override
-                public void onChanged(Integer integer) {
-                    if(integer== ImageContourSelectorViewModel.ADD_IMAGE) {
-                        mScannedDocument.addScannedImage(oriBitmapLiveData, contourLiveData);
-                        mButtonBitmap.setValue(mScannedDocument.getScannedImageList().get(mScannedDocument.getScannedImageList().size() - 1).getFinalImage());
-                        clearBuffer(navController);
-                    }
-                    else if(integer == ImageContourSelectorViewModel.DISCARD_IMAGE)
-                    {
-                        clearBuffer(navController);
-                    }
+            flagLiveData.observe(owner, integer -> {
+                if(integer== ImageContourSelectorViewModel.ADD_IMAGE) {
+                    mScannedDocument.addScannedImage(oriBitmapLiveData, contourLiveData);
+                    mButtonBitmap.setValue(mScannedDocument.getScannedImageList().get(mScannedDocument.getScannedImageList().size() - 1).getFinalImage());
+                    clearBuffer(navController);
+                }
+                else if(integer == ImageContourSelectorViewModel.DISCARD_IMAGE)
+                {
+                    clearBuffer(navController);
                 }
             });
         }

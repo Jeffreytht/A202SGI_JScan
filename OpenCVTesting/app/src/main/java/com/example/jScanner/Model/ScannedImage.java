@@ -22,6 +22,7 @@ public class ScannedImage implements Parcelable {
     private Point[] mContour;
     private int mFilter;
 
+
     public ScannedImage(@Nonnull Bitmap oriImage, @Nonnull Point[] contour) {
         mOriImage = oriImage;
         mContour = contour;
@@ -75,7 +76,8 @@ public class ScannedImage implements Parcelable {
     }
 
     public Bitmap getFinalImage() {
-        return ImageProcessing.colorFiltering(ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)), mFilter);
+        return  ImageProcessing.colorFiltering(ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)), mFilter);
+//        return  (ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)));
     }
 
     public Point[] getContour() {

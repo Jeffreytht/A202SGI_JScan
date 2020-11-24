@@ -78,6 +78,10 @@ public class DocumentReaderViewModel extends ViewModel {
         return name != null && !name.isEmpty();
     }
 
+    public boolean isNewDocument(){
+        return mScannedDocument.getValue().getId() == null || mScannedDocument.getValue().getId().isEmpty();
+    }
+
     public void rotateBitmapNContour(int index, int degree) {
         if (mScannedDocument.getValue() == null)
             return;

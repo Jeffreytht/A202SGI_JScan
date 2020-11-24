@@ -8,12 +8,15 @@ import androidx.annotation.NonNull;
 import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,4 +56,23 @@ public class Storage {
         ref.putBytes(pdf);
     }
 
+    public static void downloadImage(@NonNull String path, @NonNull final CommonResultListener<byte[]> commonResultListener){
+        StorageReference ref = mInstance.mStorage.getReference().child(IMAGE_PREFIX_PATH + path);
+        final long ONE_MEGABYTE = 1024 * 1024;
+        ref.getBytes(10 * ONE_MEGABYTE).addOnCompleteListener(result ->
+            commonResultListener.onResultReceived(result.isSuccessful() ? result.getResult() : null)
+        );
+    }
+
+    public static void downloadPDF(@NonNull ScannedDocument scannedDocument, @NonNull CommonResultListener<File> listener){
+        try {
+            File localFile = File.createTempFile("document", ".pdf");
+            StorageReference ref = mInstance.mStorage.getReference().child(DOCUMENT_PREFIX_PATH + scannedDocument.getId() + "/" + scannedDocument.getName() + ".pdf");
+            ref.getFile(localFile).addOnSuccessListener( success ->{
+                listener.onResultReceived(localFile);
+            }).addOnFailureListener(failure -> listener.onResultReceived(null));
+        }catch (IOException ex){
+             listener.onResultReceived(null);
+        }
+    }
 }

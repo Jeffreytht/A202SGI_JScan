@@ -16,16 +16,18 @@ import java.util.HashMap;
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentViewHolder> {
     private final Context mContext;
     private final ArrayList<ScannedDocument> mScannedDocumentArrayList;
+    private final DashboardItemListener mDashboardItemListener;
 
-    public DocumentAdapter(ArrayList<ScannedDocument> scannedDocumentArrayList, Context context){
+    public DocumentAdapter(ArrayList<ScannedDocument> scannedDocumentArrayList, Context context, DashboardItemListener dashboardItemListener){
         this.mContext = context;
         this.mScannedDocumentArrayList = scannedDocumentArrayList;
+        this.mDashboardItemListener = dashboardItemListener;
     }
 
     @NonNull
     @Override
     public DocumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DocumentViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_document_list,parent, false));
+        return new DocumentViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_document_list,parent, false), mDashboardItemListener);
     }
 
     @Override

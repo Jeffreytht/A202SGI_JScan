@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -60,16 +61,17 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
         mBtnDocument.setOnClickListener(this);
         mTextViewTotalImage = root.findViewById(R.id.textView_totalImage);
         mTextViewTotalImage.setVisibility(View.INVISIBLE);
-
-        scannerViewModel.getButtonBitmap().observe(getViewLifecycleOwner(), new Observer<Bitmap>() {
-            @Override
-            public void onChanged(Bitmap bitmap) {
-                mBtnDocument.setImageBitmap(bitmap);
-                mTextViewTotalImage.setText(String.valueOf(scannerViewModel.getTotalScannedImage()));
-                mTextViewTotalImage.setVisibility(View.VISIBLE);
-            }
-        });
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        scannerViewModel.getButtonBitmap().observe(getViewLifecycleOwner(), bitmap -> {
+            mBtnDocument.setImageBitmap(bitmap);
+            mTextViewTotalImage.setText(String.valueOf(scannerViewModel.getTotalScannedImage()));
+            mTextViewTotalImage.setVisibility(View.VISIBLE);
+        });
     }
 
     @Override
@@ -108,6 +110,10 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, C
             baseLoaderCallback.onManagerConnected(BaseLoaderCallback.SUCCESS);
         else
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, getActivity(),baseLoaderCallback);
+
+        if(getArguments() != null){
+            scannerViewModel.initViewModel(getArguments());
+        }
     }
 
 

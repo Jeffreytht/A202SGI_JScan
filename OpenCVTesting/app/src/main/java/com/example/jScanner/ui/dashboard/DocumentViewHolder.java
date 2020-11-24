@@ -24,14 +24,18 @@ public class DocumentViewHolder extends RecyclerView.ViewHolder {
     private final Button mBtnShare;
     private final Button mBtnRename;
     private final Button mBtnModify;
+    private final Button mBtnDelete;
+    private final DashboardItemListener mDashboardItemListener;
 
-    public DocumentViewHolder(@NonNull View itemView) {
+    public DocumentViewHolder(@NonNull View itemView, @NonNull DashboardItemListener dashboardItemListener) {
         super(itemView);
+        mDashboardItemListener = dashboardItemListener;
         mTvDocument = itemView.findViewById(R.id.tv_document_name);
         mTvDate     = itemView.findViewById(R.id.tv_date);
         mBtnModify  = itemView.findViewById(R.id.btn_modify);
         mBtnRename  = itemView.findViewById(R.id.btn_rename);
         mBtnShare   = itemView.findViewById(R.id.btn_share);
+        mBtnDelete  = itemView.findViewById(R.id.btn_delete);
         mIvDocumentImage = itemView.findViewById(R.id.iv_document_image);
     }
 
@@ -40,5 +44,11 @@ public class DocumentViewHolder extends RecyclerView.ViewHolder {
         mTvDate.setText(mDateFormat.format(new Date(scannedDocument.getDate())));
         mIvDocumentImage.setImageURI(scannedDocument.getCoverUri());
         Glide.with(itemView).load(scannedDocument.getCoverUri()).into(mIvDocumentImage);
+
+        mBtnModify.setOnClickListener(view -> mDashboardItemListener.onModifyClicked(scannedDocument));
+        mBtnRename.setOnClickListener(view -> mDashboardItemListener.onRenameClicked(scannedDocument));
+        mBtnShare.setOnClickListener(view -> mDashboardItemListener.onShareClicked(scannedDocument));
+        mBtnDelete.setOnClickListener(view -> mDashboardItemListener.onDeleteClicked(scannedDocument));
+        mIvDocumentImage.setOnClickListener(view ->mDashboardItemListener.onImageClicked(scannedDocument));
     }
 }

@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -36,6 +37,10 @@ public class ImageProcessing {
         put(COLORFILTER_GRAYSCALE, "Grayscale");
         put(COLORFILTER_COLOR, "Whiteboard");
     }};
+
+    static{
+        OpenCVLoader.initDebug();
+    }
 
     public static void rotateImage(Mat src, Context context)
     {

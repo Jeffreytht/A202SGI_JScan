@@ -107,6 +107,14 @@ public class ScannedDocument implements Parcelable {
         mScannedImageList.add(new ScannedImage(oriImage, contour));
     }
 
+    public void clearScannedImage(){
+        mScannedImageList.clear();
+    }
+
+    public void addScannedImage(ScannedImage scannedImage){
+        mScannedImageList.add(scannedImage);
+    }
+
     public int getTotalPages() {
         return mScannedImageList.size();
     }

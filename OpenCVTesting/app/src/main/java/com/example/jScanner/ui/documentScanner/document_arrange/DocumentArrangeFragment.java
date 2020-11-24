@@ -47,7 +47,7 @@ public class DocumentArrangeFragment extends Fragment {
             touchHelper.attachToRecyclerView(mRvDocumentArrange);
             mRvDocumentArrange.setAdapter(mAdapter);
             mRvDocumentArrange.setLayoutManager(new GridLayoutManager(getContext(), 2));
-            mRvDocumentArrange.addItemDecoration(new GridSpacingItemDecoration(2,16,true));
+//            mRvDocumentArrange.addItemDecoration(new GridSpacingItemDecoration(2,50,true));
         }
 
         NavBackStackEntry backStack = NavHostFragment.findNavController(this).getPreviousBackStackEntry();
