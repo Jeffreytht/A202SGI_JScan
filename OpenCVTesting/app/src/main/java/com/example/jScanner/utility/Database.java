@@ -10,7 +10,6 @@ import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.Model.ScannedImage;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.firestore.util.Executors;
 
 import org.opencv.core.Point;
 
@@ -55,6 +55,7 @@ public class Database {
         instance.mDb.collection(COL_USER).document(uuid).set(user, SetOptions.merge());
     }
 
+    @NonNull
     private static Task<Void> insertImages(@NonNull final FirebaseUser user, @NonNull final ScannedDocument scannedDocument) {
         final CollectionReference ref = instance.mDb.collection(COL_USER).document(user.getUid())
                 .collection(COL_DOCUMENT).document(scannedDocument.getId())
@@ -66,8 +67,6 @@ public class Database {
         Map<String, Object> imageData = new HashMap<>();
 
         int seq = 1;
-        // Upload cover for document list in dashboard
-        Storage.uploadImage(scannedDocument.getId() + "/cover.bmp", scannedImageLinkedList.get(0).getFinalImage());
 
         for (ScannedImage si : scannedImageLinkedList) {
             String path = scannedDocument.getId() + "/" + seq + ".bmp";
@@ -79,25 +78,33 @@ public class Database {
             seq++;
         }
 
-        return writeBatch.commit();
+        return writeBatch.commit().continueWith(Task::getResult);
     }
 
-    private static void removeImages(@NonNull final FirebaseUser user, @NonNull final ScannedDocument scannedDocument){
-
-        final WriteBatch writeBatch = instance.mDb.batch();
-
-        instance.mDb.collection(COL_USER).document(user.getUid())
-                .collection(COL_DOCUMENT).document(scannedDocument.getId())
-                .collection(COL_IMAGES).get().continueWith( task ->{
-                    QuerySnapshot snapshots = task.getResult();
-                    for(DocumentSnapshot s: snapshots)
-                        writeBatch.delete(s.getReference());
-                    writeBatch.commit();
-                    return null;
-        });
+    private static Task<QuerySnapshot> getImagesSnapshot(@NonNull final FirebaseUser user, @NonNull final ScannedDocument scannedDocument){
+        try {
+            return instance.mDb.collection(COL_USER).document(user.getUid())
+                    .collection(COL_DOCUMENT).document(scannedDocument.getId())
+                    .collection(COL_IMAGES).get().continueWith(Task::getResult);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
     }
 
-    public static void updateDocument(@NonNull FirebaseUser firebaseUser, @NonNull ScannedDocument scannedDocument){
+    private static Task<Object> removeImages(@NonNull QuerySnapshot imageQuerySnapshots){
+        try {
+            WriteBatch writeBatch = instance.mDb.batch();
+            for (DocumentSnapshot s : imageQuerySnapshots)
+                writeBatch.delete(s.getReference());
+            return writeBatch.commit().continueWith(Task::getResult);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return  null;
+        }
+    }
+
+    public static void saveDocument(@NonNull FirebaseUser firebaseUser, @NonNull ScannedDocument scannedDocument){
         String uuid = firebaseUser.getUid();
 
         HashMap<String, String> data = new HashMap<>();
@@ -119,8 +126,7 @@ public class Database {
                 .delete();
     }
 
-    public static void saveDocument(final FirebaseUser firebaseUser, final ScannedDocument scannedDocument, final ProgressDialogListener progressDialogListener) {
-        progressDialogListener.onShowProgressDialog("Saving document");
+    private static void insertNewDocument(@NonNull final FirebaseUser firebaseUser, @NonNull final ScannedDocument scannedDocument, @NonNull final ProgressDialogListener progressDialogListener){
         String uuid = firebaseUser.getUid();
 
         final CollectionReference collectionReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT);
@@ -129,42 +135,53 @@ public class Database {
         documentData.put(FLD_FILE_NAME, scannedDocument.getName());
         documentData.put(FLD_DATE_ADDED, Calendar.getInstance().getTimeInMillis());
 
-        // Check if this document is new
-        Continuation<Task<Void>, Object> uploadImages = insertImagesTask -> {
-            if (insertImagesTask.isSuccessful()) {
-                Storage.uploadImages(scannedDocument);
-                Storage.uploadPDF(scannedDocument.getId() + "/" + scannedDocument.getName() + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList()));
-            }
-            progressDialogListener.onDismissProgressDialog();
-            return null;
-        };
-
-        if (scannedDocument.getId() == null || scannedDocument.getId().isEmpty()) {
-            collectionReference.add(documentData).continueWith(taskAddDocument -> {
-                if (!taskAddDocument.isSuccessful()) {
-                    progressDialogListener.onDismissProgressDialog();
+        collectionReference.add(documentData).continueWith(Executors.DIRECT_EXECUTOR, taskAddDocument -> {
+            scannedDocument.setId(Objects.requireNonNull(taskAddDocument.getResult()).getId());
+            return getImagesSnapshot(firebaseUser, scannedDocument);
+        })      .continueWith(Executors.DIRECT_EXECUTOR, taskAddDocument        -> getImagesSnapshot(firebaseUser, scannedDocument)
+                .continueWith(Executors.DIRECT_EXECUTOR, taskGetImagesSnapshot  -> removeImages(taskGetImagesSnapshot.getResult())
+                .continueWith(Executors.DIRECT_EXECUTOR, taskRemoveImages       -> insertImages(firebaseUser, scannedDocument))
+                .continueWith(Executors.DIRECT_EXECUTOR, taskInsertImages       -> {
+                    Storage.uploadImages(scannedDocument, result -> Storage.uploadPDF(scannedDocument.getId() + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList())));
                     return null;
-                } else {
-                    scannedDocument.setId(Objects.requireNonNull(taskAddDocument.getResult()).getId());
-                    removeImages(firebaseUser, scannedDocument);
-                    return insertImages(firebaseUser, scannedDocument);
-                }
-            }).continueWith(uploadImages);
+                }).continueWith(Task::getResult)
+        )).continueWith(nothing -> {progressDialogListener.onDismissProgressDialog(); return null;} );
+    }
 
+    private static void updateDocument(@NonNull final FirebaseUser firebaseUser, @NonNull final ScannedDocument scannedDocument, @NonNull final ProgressDialogListener progressDialogListener){
+        String uuid = firebaseUser.getUid();
+
+        final CollectionReference collectionReference = instance.mDb.collection(COL_USER).document(uuid).collection(COL_DOCUMENT);
+        Map<String, Object> documentData = new HashMap<>();
+        documentData.put(FLD_FILE_NAME, scannedDocument.getName());
+        documentData.put(FLD_DATE_ADDED, Calendar.getInstance().getTimeInMillis());
+
+        collectionReference.document(scannedDocument.getId()).set(documentData)
+                .continueWith(Executors.DIRECT_EXECUTOR, taskAddDocument        -> getImagesSnapshot(firebaseUser, scannedDocument))
+                .continueWith(Executors.DIRECT_EXECUTOR, taskAddDocument        -> getImagesSnapshot(firebaseUser, scannedDocument)
+                .continueWith(Executors.DIRECT_EXECUTOR, taskGetImagesSnapshot  -> removeImages(taskGetImagesSnapshot.getResult())
+                .continueWith(Executors.DIRECT_EXECUTOR, taskRemoveImages       -> insertImages(firebaseUser, scannedDocument))
+                .continueWith(Executors.DIRECT_EXECUTOR, taskInsertImages       -> {
+                        Storage.uploadImages(scannedDocument, result -> Storage.uploadPDF(scannedDocument.getId() + ".pdf", PDFBuilder.PDFToBytes(scannedDocument.getScannedImageList())));
+                        return null;
+                    }).continueWith(Task::getResult)
+                )).continueWith(nothing -> {progressDialogListener.onDismissProgressDialog(); return null;});
+
+    }
+
+
+    public static void saveDocument(@NonNull final FirebaseUser firebaseUser, @NonNull final ScannedDocument scannedDocument, @NonNull final ProgressDialogListener progressDialogListener) {
+        progressDialogListener.onShowProgressDialog("Saving document");
+
+        if (scannedDocument.getId().isEmpty()) {
+            insertNewDocument(firebaseUser, scannedDocument, progressDialogListener);
         } else {
-            collectionReference.document(scannedDocument.getId()).set(documentData).continueWith(taskSetDocument -> {
-                if (!taskSetDocument.isSuccessful()) {
-                    progressDialogListener.onDismissProgressDialog();
-                    return null;
-                } else {
-                    removeImages(firebaseUser, scannedDocument);
-                    return insertImages(firebaseUser, scannedDocument);
-                }
-            }).continueWith(uploadImages);
+            updateDocument(firebaseUser, scannedDocument, progressDialogListener);
         }
     }
 
     @SuppressWarnings("unchecked")
+    @NonNull
     private static Point[] listOfMapToPoints(@NonNull List<?> maps){
         final int TOTAL_POINTS = maps.size();
         Point[] points = new Point[TOTAL_POINTS];
@@ -277,11 +294,9 @@ public class Database {
                     }
                 });
             }
-
             return null;
         });
     }
-
 
     public static void getBriefDocument(@NonNull FirebaseUser firebaseUser, @NonNull final CommonResultListener<ArrayList<ScannedDocument>> dbGetDocumentCallback) {
         String uuid = firebaseUser.getUid();

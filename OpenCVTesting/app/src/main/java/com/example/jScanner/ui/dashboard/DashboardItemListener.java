@@ -8,4 +8,5 @@ public interface DashboardItemListener {
     void onModifyClicked(ScannedDocument scannedDocument);
     void onDeleteClicked(ScannedDocument scannedDocument);
     void onImageClicked(ScannedDocument scannedDocument);
+    void onShareableLinkClicked(ScannedDocument scannedDocument);
 }

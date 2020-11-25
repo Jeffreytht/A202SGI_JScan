@@ -68,7 +68,7 @@
     <fragment
         android:id="@+id/fragment_sign_in"
         android:name="com.example.jScanner.ui.signin.SignIn"
-        android:label="fragment_sign_in"
+        android:label="@string/label_signIn"
         tools:layout="@layout/fragment_sign_in" >
         <action
             android:id="@+id/action_fragment_sign_in_to_signUpFragment"
@@ -110,6 +110,18 @@
         <action
             android:id="@+id/action_dashboard_to_fragment_scanner"
             app:destination="@id/fragment_document" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_profile"
+        android:name="com.example.jScanner.ui.profile.FragmentProfile"
+        android:label="@string/label_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_fragment_profile_to_fragment_sign_in"
+            app:destination="@id/fragment_sign_in"
+            app:popUpTo="@+id/fragment_sign_in"
+            app:popUpToInclusive="false"
+            />
     </fragment>
 
 </navigation>

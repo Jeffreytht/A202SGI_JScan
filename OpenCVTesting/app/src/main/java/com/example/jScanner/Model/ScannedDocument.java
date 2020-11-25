@@ -15,14 +15,12 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-public class ScannedDocument implements Parcelable {
-
+public class ScannedDocument implements Parcelable, Comparable<ScannedDocument>{
+    
     private LinkedList<ScannedImage> mScannedImageList = new LinkedList<>();
     private String mName;
     private String mId;
-    private Uri mCoverUri;
+    private final Uri mCoverUri;
     private long mDate;
 
     protected ScannedDocument(Parcel in) {
@@ -35,15 +33,15 @@ public class ScannedDocument implements Parcelable {
         this("", "");
     }
 
-    public ScannedDocument(String id, String name) {
+    public ScannedDocument(@NonNull String id, @NonNull String name) {
         this(id, name, new LinkedList<>());
     }
 
-    public ScannedDocument(String id, String name, LinkedList<ScannedImage> scannedImages) {
+    public ScannedDocument(@NonNull String id, @NonNull String name, @NonNull LinkedList<ScannedImage> scannedImages) {
         this(id, name, scannedImages, null);
     }
 
-    public ScannedDocument(String id, String name, LinkedList<ScannedImage> scannedImages, Uri uri) {
+    public ScannedDocument(@NonNull String id, @NonNull String name, @NonNull LinkedList<ScannedImage> scannedImages, @Nullable Uri uri) {
         this(id, name, scannedImages, uri, 0);
     }
 
@@ -67,32 +65,32 @@ public class ScannedDocument implements Parcelable {
         }
     };
 
+    @NonNull
     public List<ScannedImage> getScannedImageList() {
         return mScannedImageList;
     }
 
+    @NonNull
     public String getId() {
         return mId;
     }
 
-    public void setId(String mId) {
+    public void setId(@NonNull String mId) {
         this.mId = mId;
     }
 
+    @NonNull
     public String getName() {
-        return (mName == null || mName.isEmpty()) ?  DateFormat.getDateInstance().format(Calendar.getInstance().getTime()) : mName;
+        return (mName.isEmpty()) ?  DateFormat.getDateInstance().format(Calendar.getInstance().getTime()) : mName;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.mName = name;
     }
 
+    @Nullable
     public Uri getCoverUri() {
         return this.mCoverUri;
-    }
-
-    public void setCoverUri(@Nonnull Uri uri){
-        this.mCoverUri = uri;
     }
 
     public long getDate(){
@@ -103,7 +101,7 @@ public class ScannedDocument implements Parcelable {
         mDate = date;
     }
 
-    public void addScannedImage(Bitmap oriImage, Point[] contour) {
+    public void addScannedImage(@NonNull Bitmap oriImage, @NonNull Point[] contour) {
         mScannedImageList.add(new ScannedImage(oriImage, contour));
     }
 
@@ -111,7 +109,7 @@ public class ScannedDocument implements Parcelable {
         mScannedImageList.clear();
     }
 
-    public void addScannedImage(ScannedImage scannedImage){
+    public void addScannedImage(@NonNull ScannedImage scannedImage){
         mScannedImageList.add(scannedImage);
     }
 
@@ -129,5 +127,10 @@ public class ScannedDocument implements Parcelable {
         dest.writeString(mName);
         dest.writeString(mId);
         dest.writeParcelable(mCoverUri, flags);
+    }
+
+    @Override
+    public int compareTo(ScannedDocument o) {
+        return (int)(this.mDate - o.mDate);
     }
 }

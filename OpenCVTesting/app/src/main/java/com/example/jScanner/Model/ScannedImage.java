@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.example.jScanner.utility.ImageProcessing;
 
 import org.opencv.core.MatOfPoint2f;
@@ -12,13 +14,12 @@ import org.opencv.core.Point;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 public class ScannedImage implements Parcelable {
 
-    @Nonnull
     private Bitmap mOriImage;
-    @Nonnull
     private Point[] mContour;
     private int mFilter;
 
@@ -59,14 +60,16 @@ public class ScannedImage implements Parcelable {
         dest.writeInt(mFilter);
     }
 
+    @Nonnegative
     public int getFilter() {
         return mFilter;
     }
 
-    public void setFilter(int mFilter) {
+    public void setFilter(@Nonnegative int mFilter) {
         this.mFilter = mFilter;
     }
 
+    @NonNull
     public Bitmap getOriImage() {
         return mOriImage;
     }
@@ -75,11 +78,12 @@ public class ScannedImage implements Parcelable {
         this.mOriImage = oriImage;
     }
 
+    @NonNull
     public Bitmap getFinalImage() {
-        return  ImageProcessing.colorFiltering(ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)), mFilter);
-//        return  (ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)));
+        return ImageProcessing.colorFiltering(ImageProcessing.warpPerspective(mOriImage, new MatOfPoint2f(mContour)), mFilter);
     }
 
+    @NonNull
     public Point[] getContour() {
         return mContour;
     }
@@ -88,6 +92,7 @@ public class ScannedImage implements Parcelable {
         this.mContour = mContour;
     }
 
+    @NonNull
     public Bitmap[] getFilteredBitmaps() {
         int totalFilterType = ImageProcessing.FILTER_TYPE.size();
         Bitmap[] bmp = new Bitmap[totalFilterType];

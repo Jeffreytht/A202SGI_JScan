@@ -1,9 +1,11 @@
 package com.example.jScanner.ui.dashboard;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jScanner.Callback.BiResultListener;
-import com.example.jScanner.Callback.CommonResultListener;
 import com.example.jScanner.Callback.ProgressDialogListener;
 import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.MainActivity;
@@ -34,8 +35,6 @@ import com.example.jScanner.utility.User;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Dashboard extends Fragment implements View.OnClickListener, ProgressDialogListener, DashboardItemListener, BiResultListener<StatusResultListener, ScannedDocument> {
@@ -51,6 +50,7 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         mRvDocumentList = view.findViewById(R.id.rv_document_list);
         mFabScanner = view.findViewById(R.id.fab_scanner);
+        registerForContextMenu(mRvDocumentList);
         return view;
     }
 
@@ -60,15 +60,13 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
         mFabScanner.setOnClickListener(this);
 
+
         mAdapter = new DocumentAdapter(mViewModel.getScannedDocument().getValue(), requireContext(), this);
         mRvDocumentList.addItemDecoration(new DashboardItemDecoration(16, 1,getResources().getDisplayMetrics()));
         mRvDocumentList.setAdapter(mAdapter);
         mRvDocumentList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false));
 
-        mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), documents -> {
-            mAdapter.notifyDataSetChanged();
-        });
-
+        mViewModel.getScannedDocument().observe(getViewLifecycleOwner(), documents -> mAdapter.notifyDataSetChanged());
         mViewModel.initDocument(this);
     }
 
@@ -79,20 +77,19 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
         }
     }
 
-
     @Override
     public void onShowProgressDialog(String message) {
-        ((MainActivity) requireActivity()).showProgressDialog(message);
+        requireActivity().runOnUiThread(()-> ((MainActivity) requireActivity()).showProgressDialog(message));
     }
 
     @Override
     public void onUpdateProgressDialog(String message) {
-        ((MainActivity) requireActivity()).updateProgressDialog(message);
+        requireActivity().runOnUiThread(()-> ((MainActivity) requireActivity()).updateProgressDialog(message));
     }
 
     @Override
     public void onDismissProgressDialog() {
-        ((MainActivity) requireActivity()).dismissProgressDialog();
+        requireActivity().runOnUiThread(()-> ((MainActivity) requireActivity()).dismissProgressDialog());
     }
 
     @Override
@@ -113,6 +110,16 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
     }
 
     @Override
+    public void onShareableLinkClicked(ScannedDocument scannedDocument) {
+        Storage.getPDFUri(scannedDocument.getId(), listener ->{
+            ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Copied Text", listener.toString());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(requireContext(),"Link copied to clipboard", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
     public void onShareClicked(ScannedDocument scannedDocument) {
         Storage.downloadPDF(scannedDocument, file -> {
             if(file != null) {
@@ -122,7 +129,6 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
                 sharePDF.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 sharePDF.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 startActivity(Intent.createChooser(sharePDF,"Share "));
-
             } else {
                 Toast.makeText(requireContext(), "Error Downloading PDF", Toast.LENGTH_SHORT).show();
             }
@@ -149,7 +155,7 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
                 .setView(linearLayout)
                 .setPositiveButton("Save", (dialog, which) -> {
                     scannedDocument.setName(mEditTextFileName.getText().toString());
-                    Database.updateDocument(User.getUser(), scannedDocument);
+                    Database.saveDocument(Objects.requireNonNull(User.getUser()), scannedDocument);
                     mAdapter.notifyItemChanged(mViewModel.indexOfScannedDocument(scannedDocument));
                 })
                 .show();
@@ -157,14 +163,19 @@ public class Dashboard extends Fragment implements View.OnClickListener, Progres
 
     @Override
     public void onModifyClicked(ScannedDocument scannedDocument) {
-        Database.getFullDocument(User.getUser(),scannedDocument,this, this);
+        Database.getFullDocument(Objects.requireNonNull(User.getUser()),scannedDocument,this, this);
     }
 
     @Override
     public void onDeleteClicked(ScannedDocument scannedDocument) {
-        Database.removeDocument(User.getUser(), scannedDocument);
-        this.mViewModel.removeDocument(scannedDocument);
-        this.mAdapter.notifyDataSetChanged();
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete document")
+                .setMessage("Are you sure you want to delete the document permanently?")
+                .setPositiveButton(getString(R.string.label_delete), (dialog, which)->{
+                    Database.removeDocument(Objects.requireNonNull(User.getUser()), scannedDocument);
+                    this.mViewModel.removeDocument(scannedDocument);
+                    this.mAdapter.notifyDataSetChanged(); })
+                .setNeutralButton(getString(R.string.label_cancel), ((dialog, which) -> dialog.dismiss())).show();
     }
 
     @Override

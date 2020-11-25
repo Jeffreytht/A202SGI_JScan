@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.fragment_room,
-                R.id.fragment_dashboard
+                R.id.fragment_dashboard,
+                R.id.fragment_profile
         ).build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
         final int destId = destination.getId();
-        if(destId == R.id.fragment_dashboard){
+        if(destId == R.id.fragment_dashboard || destId == R.id.fragment_profile){
             showBottomNav();
         } else {
             hideBottomNav();

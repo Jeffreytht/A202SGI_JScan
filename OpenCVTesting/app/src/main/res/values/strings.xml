@@ -30,6 +30,10 @@
     <string name="label_modify">Modify</string>
     <string name="label_dashboard">Dashboard</string>
     <string name="label_room">Room</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_profile">Profile</string>
+    <string name="label_logout">Logout</string>
+    <string name="label_edit_profile">Edit Profile</string>
 
     <!-- error message -->
     <string name="error_email_empty">Email cannot be empty</string>
@@ -38,4 +42,6 @@
     <string name="error_confirm_not_match">Confirm does not match password</string>
     <string name="msg_signUpSuccess">Sign up successfully</string>
     <string name="msg_signInSuccess">Sign in successfully</string>
+    <string name="label_get_shareable_link">Get shareable link</string>
+
 </resources>

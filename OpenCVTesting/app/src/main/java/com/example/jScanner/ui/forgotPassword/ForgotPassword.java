@@ -12,12 +12,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.jScanner.Callback.StatusResultListener;
 import com.example.jScanner.R;
 import com.example.jScanner.utility.User;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ForgotPassword extends Fragment {
@@ -59,28 +59,20 @@ public class ForgotPassword extends Fragment {
             }
         });
 
-        mButtonResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mViewModel.validate()) {
-                    User.resetPasswordWithEmail(mViewModel.getEmail());
-                }
+        mButtonResetPassword.setOnClickListener(v -> {
+            if(mViewModel.validate()) {
+                User.resetPasswordWithEmail(mViewModel.getEmail());
             }
         });
 
-        mViewModel.getErrEmail().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                mEditTextEmail.setError((s.isEmpty() )? null : s);
-            }
-        });
+        mViewModel.getErrEmail().observe(getViewLifecycleOwner(), s -> mEditTextEmail.setError((s.isEmpty() )? null : s));
 
-        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<StatusResultListener>() {
-            @Override
-            public void onChanged(StatusResultListener statusResultListener) {
-                Toast.makeText(getContext(), statusResultListener.getErrorMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
+        User.getSignInResult().observe(getViewLifecycleOwner(),
+                statusResultListener -> new MaterialAlertDialogBuilder(requireContext())
+                        . setTitle("Reset password")
+                        . setMessage(statusResultListener.getErrorMessage())
+                        . setPositiveButton("Ok", (dialog, which)-> dialog.dismiss())
+                        . show());
     }
 
 }

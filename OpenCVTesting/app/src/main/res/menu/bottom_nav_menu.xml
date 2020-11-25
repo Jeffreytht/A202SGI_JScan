@@ -7,8 +7,8 @@
         android:title="@string/label_dashboard" />
 
     <item
-        android:id="@+id/fragment_room"
-        android:icon="@drawable/ic_baseline_meeting_room_24"
-        android:title="@string/label_room" />
+        android:id="@+id/fragment_profile"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/label_profile" />
 
 </menu>

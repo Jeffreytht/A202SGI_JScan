@@ -91,31 +91,19 @@ public class SignIn extends Fragment implements View.OnClickListener{
             }
         });
 
-        mViewModel.getEmailErrorMessage().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                mEmailEditText.setError(s.isEmpty() ? null : s);
-            }
-        });
+        mViewModel.getEmailErrorMessage().observe(getViewLifecycleOwner(), s -> mEmailEditText.setError(s.isEmpty() ? null : s));
 
-        mViewModel.getPasswordErrorMessage().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                mPasswordEditText.setError(s.isEmpty() ? null : s);
-            }
-        });
+        mViewModel.getPasswordErrorMessage().observe(getViewLifecycleOwner(), s -> mPasswordEditText.setError(s.isEmpty() ? null : s));
 
-        User.getSignInResult().observe(getViewLifecycleOwner(), new Observer<StatusResultListener>() {
-            @Override
-            public void onChanged(StatusResultListener statusResultListener) {
-                ((MainActivity) requireActivity()).dismissProgressDialog();
-                if(statusResultListener.isSuccess()){
-                    Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
-                    NavController navController =  NavHostFragment.findNavController(SignIn.this);
-                    navController.navigate(R.id.action_fragment_sign_in_to_dashboard);
-                } else {
-                    Toast.makeText(getContext(), statusResultListener.getErrorMessage(), Toast.LENGTH_LONG).show();
-                }
+        User.getSignInResult().observe(getViewLifecycleOwner(), statusResultListener -> {
+            ((MainActivity) requireActivity()).dismissProgressDialog();
+
+            if(User.getUser() != null && statusResultListener.isSuccess()){
+                Toast.makeText(getContext(), R.string.msg_signInSuccess, Toast.LENGTH_SHORT).show();
+                NavController navController =  NavHostFragment.findNavController(SignIn.this);
+                navController.navigate(R.id.action_fragment_sign_in_to_dashboard);
+            } else if(User.getUser() == null && !statusResultListener.isSuccess()) {
+                Toast.makeText(getContext(), statusResultListener.getErrorMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

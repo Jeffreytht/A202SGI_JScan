@@ -11,7 +11,6 @@ import com.example.jScanner.Model.ScannedDocument;
 import com.example.jScanner.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentViewHolder> {
     private final Context mContext;
@@ -27,7 +26,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentViewHolder> {
     @NonNull
     @Override
     public DocumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DocumentViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_document_list,parent, false), mDashboardItemListener);
+        return new DocumentViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_document_list,parent, false), mContext, mDashboardItemListener);
     }
 
     @Override
@@ -35,8 +34,10 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentViewHolder> {
         holder.setViewHolder(mScannedDocumentArrayList.get(position));
     }
 
+
     @Override
     public int getItemCount() {
         return mScannedDocumentArrayList.size();
     }
+
 }
