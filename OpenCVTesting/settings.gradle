@@ -1,3 +1,0 @@
-include ':app'
-rootProject.name='OpenCVTesting'
-include ':openCVLibrary3411'
